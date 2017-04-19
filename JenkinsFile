@@ -1,6 +1,6 @@
 node {
     stage('SCM') {
-        git 'https://github.com/troyeagle/risk-manager.git/'
+        git 'https://github.com/padeoe/battery-historian.git/'
     }
     stage('build') {
         def mvnHome = tool 'M3'
