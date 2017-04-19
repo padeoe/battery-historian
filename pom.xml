@@ -7,7 +7,7 @@
     <groupId>com.padeoe</groupId>
     <artifactId>android-baterry</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -30,6 +30,7 @@
         <java.version>1.8</java.version>
     </properties>
     <build>
+        <finalName>ROOT</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
