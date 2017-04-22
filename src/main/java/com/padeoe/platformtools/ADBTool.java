@@ -131,15 +131,6 @@ public class ADBTool {
         return null;
     }
 
-    public static void main(String[] args) {
-        try {
-            getDevices().forEach(adbDevice -> System.out.println(adbDevice));
-        } catch (EnvironmentNotConfiguredException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     static class Prop {
         public final String key;

@@ -92,12 +92,5 @@ public class ADBDevice {
         }
     }
 
-    public static void main(String[] args) {
-        try {
-            new ADBDevice("cff038b5b02d350").installAPK(new File("C:\\Users\\padeoe\\Desktop\\app-release.apk"));
-        } catch (InstallFailureException e) {
-            e.printStackTrace();
-        }
-    }
 }
 
