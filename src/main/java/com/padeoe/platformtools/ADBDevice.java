@@ -26,38 +26,8 @@ public class ADBDevice {
         return ADBTool.getProp(this.serialNumber,propName);
     }
 
-    public boolean installAPK(File apkFile) throws EnvironmentNotConfiguredException, NoDeviceException {
-        String []commands=new String[]{"adb","-s",this.serialNumber,"install","-r",apkFile.getPath()};
-        Runtime runtime = Runtime.getRuntime();
-        Process process;
-        try {
-            process = runtime.exec(commands);
-            InputStream is = process.getInputStream();
-            InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader bf = new BufferedReader(isr);
-            String line;
-            while ((line = bf.readLine()) != null) {
-             //   System.out.println(line);
-                if(line.indexOf("Success")!=-1){
-                    return true;
-                }
-                if(line.indexOf("Failure")!=-1){
-                    return false;
-                }
-                if(line.indexOf("not found")!=-1){
-                    process.destroy();
-                    throw new NoDeviceException("设备未找到:"+line);
-                }
-            }
-        } catch (IOException e) {
-            throw new EnvironmentNotConfiguredException("android sdk环境变量未配置好", e);
-        }
-        try {
-            process.waitFor();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return true;
+    public void installAPK(File apkFile) throws InstallFailureException {
+         ADBTool.installApk(this.serialNumber,apkFile);
     }
 
     public ADBDevice(String serialNumber) {
@@ -124,10 +94,8 @@ public class ADBDevice {
 
     public static void main(String[] args) {
         try {
-            new ADBDevice("cff038b5b02d3500").installAPK(new File("C:\\Users\\padeoe\\Desktop\\app-release.apk"));
-        } catch (EnvironmentNotConfiguredException e) {
-            e.printStackTrace();
-        } catch (NoDeviceException e) {
+            new ADBDevice("cff038b5b02d350").installAPK(new File("C:\\Users\\padeoe\\Desktop\\app-release.apk"));
+        } catch (InstallFailureException e) {
             e.printStackTrace();
         }
     }

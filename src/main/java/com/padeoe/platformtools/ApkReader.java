@@ -25,9 +25,6 @@ public class ApkReader {
         else {
             return processOutput.stdString;
         }
- /*       return new ProcessExecutor().command(commands)
-                .redirectOutput(Slf4jStream.of(getClass()).asInfo())
-                .readOutput(true).execute().outputUTF8();*/
     }
 
     public static void main(String[] args) {

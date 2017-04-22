@@ -92,19 +92,34 @@ public class ADBTool {
         return null;
     }
 
-    public static boolean installApk(String serialNumber, File apk) {
-        String []commands=new String[]{"adb","-s","serialNumber","install","-r",apk.getPath()};
+    public static void installApk(String serialNumber, File apkFile) throws InstallFailureException {
+        String []commands=new String[]{"adb","-s",serialNumber,"install","-r",apkFile.getPath()};
+        Runtime runtime = Runtime.getRuntime();
+        Process process;
         try {
-            ProcessOutput processOutput = execute(commands);
-            if(processOutput.errorString==null){
-                return true;
+            process = runtime.exec(commands);
+            InputStream is = process.getInputStream();
+            InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader bf = new BufferedReader(isr);
+            String line;
+            while ((line = bf.readLine()) != null) {
+                if(line.indexOf("Failure")!=-1){
+                    process.destroy();
+                    throw new InstallFailureException(line);
+                }
+                if(line.indexOf("not found")!=-1){
+                    process.destroy();
+                    throw new InstallFailureException(line);
+                }
             }
-        } catch (EnvironmentNotConfiguredException e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+            throw new InstallFailureException("apk安装失败",new EnvironmentNotConfiguredException("android sdk环境变量未配置好", e));
+        }
+        try {
+            process.waitFor();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return false;
     }
 
     private static Prop parseLineGetProp(String line) {
