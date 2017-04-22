@@ -1,4 +1,4 @@
-/**
+package com.padeoe.batterhistorian; /**
  * @author padeoe
  * @Date 2017/1/3.
  */
@@ -6,7 +6,6 @@ import org.springframework.boot.*;
 import org.springframework.boot.autoconfigure.*;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
-import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
