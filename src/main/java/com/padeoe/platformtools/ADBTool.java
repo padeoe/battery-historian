@@ -92,6 +92,12 @@ public class ADBTool {
         return null;
     }
 
+    /**
+     * 安装应用程序
+     * @param serialNumber
+     * @param apkFile
+     * @throws InstallFailureException
+     */
     public static void installApk(String serialNumber, File apkFile) throws InstallFailureException {
         String []commands=new String[]{"adb","-s",serialNumber,"install","-r",apkFile.getPath()};
         Runtime runtime = Runtime.getRuntime();
@@ -177,7 +183,6 @@ public class ADBTool {
                 while ((c = inputStreamReader.read()) != -1) {
                     output.append((char) c);
                 }
-                System.out.println(output.toString());
                 inputStreamReader.close();
             } catch (IOException e) {
                 e.printStackTrace();

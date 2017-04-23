@@ -1,5 +1,7 @@
 package com.padeoe.platformtools;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,6 +16,10 @@ public class ApkInfo {
     private String sdkVersion;
     private String targetSdkVersion;
     private String versionCode;
+    private String launchableActivity;
+    private List<String>permissions;
+
+
 
     public ApkInfo(String allManifest) {
         this.allManifest=allManifest;
@@ -23,6 +29,8 @@ public class ApkInfo {
         sdkVersion = getAttribution("sdkVersion:'(.*?)'");
         targetSdkVersion = getAttribution("targetSdkVersion:'(.*?)'");
         versionCode= getAttribution("versionCode='(.*?)'");
+        launchableActivity=getAttribution("launchable-activity: name='([\\w\\.]+)'");
+        permissions=getAttributions("uses-permission: name='(.*)'");
     }
 
     private String getAttribution(String regex)
@@ -32,11 +40,58 @@ public class ApkInfo {
         if(matcher.find()){
             return matcher.group(1);
         }
-        return "";
+        return null;
+    }
+
+    private List<String> getAttributions(String regex)
+    {
+        List<String>permissions=new ArrayList<>();
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(allManifest);
+        while (matcher.find()){
+            permissions.add(matcher.group(1));
+        }
+        return permissions;
     }
 
     public boolean newerThan(ApkInfo apkInfo){
         return Integer.parseInt(versionCode)>Integer.parseInt(apkInfo.versionCode);
+    }
+
+    public String getAllManifest() {
+        return allManifest;
+    }
+
+    public String getApkName() {
+        return apkName;
+    }
+
+    public String getVersionName() {
+        return versionName;
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public String getSdkVersion() {
+        return sdkVersion;
+    }
+
+    public String getTargetSdkVersion() {
+        return targetSdkVersion;
+    }
+
+    public String getVersionCode() {
+        return versionCode;
+    }
+
+    public String getLaunchableActivity() {
+        return launchableActivity;
+    }
+
+    public List<String> getPermissions() {
+        return permissions;
     }
 
     @Override
@@ -48,6 +103,8 @@ public class ApkInfo {
                 ", sdkVersion='" + sdkVersion + '\'' +
                 ", targetSdkVersion='" + targetSdkVersion + '\'' +
                 ", versionCode='" + versionCode + '\'' +
+                ", launchableActivity='" + launchableActivity + '\'' +
+                ", permissions=" + permissions +
                 '}';
     }
 }
