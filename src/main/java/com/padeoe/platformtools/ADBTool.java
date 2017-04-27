@@ -2,7 +2,8 @@ package com.padeoe.platformtools;
 
 import javax.validation.constraints.NotNull;
 import java.io.*;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

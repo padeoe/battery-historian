@@ -1,7 +1,8 @@
 package com.padeoe.platformtools;
 
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by padeoe on 2017/4/22.

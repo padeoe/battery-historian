@@ -1,6 +1,7 @@
 package com.padeoe.platformtools;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * 该类描述了adb获得的安卓手机基本信息，包括序列号，状态，品牌，型号
