@@ -12,6 +12,10 @@ import java.util.List;
  */
 
 public interface RecordRepository extends CrudRepository<Record,Long>{
+    /**
+     * 查询特定app在哪些设备上测试过
+     */
     @Query("select record.deviceId from Record record where record.appId=?1")
-    List<Device> GetTestedDevice(String appId);
+    List<Device> getTestedDevices(String appId);
+
 }

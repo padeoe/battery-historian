@@ -13,4 +13,7 @@ public interface  AppRepository extends CrudRepository<App, Long> {
     @Query("select app from App app where app.packageName='com.padeoe'")
     public List<App> myApp();
 
+    @Query("select app from App app where concat( app.name,app.description) like concat('%',?1,'%')")
+    List<App> searchApp(String keyword);
+
 }
