@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>安卓应用电量分析系统</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- MetisMenu CSS -->
+    <link href="../vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+
+    <!-- DataTables CSS -->
+    <link href="../vendor/datatables-plugins/dataTables.bootstrap.css" rel="stylesheet">
+
+    <!-- DataTables Responsive CSS -->
+    <link href="../vendor/datatables-responsive/dataTables.responsive.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="../dist/css/sb-admin-2.css" rel="stylesheet">
+
+    <!-- Morris Charts CSS -->
+    <link href="../vendor/morrisjs/morris.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="index.html">安卓应用电量分析系统</a>
+            </div>
+            <!-- /.navbar-header -->
+
+            <!-- /.navbar-top-links -->
+
+            <div class="navbar-default sidebar" role="navigation">
+                <div class="sidebar-nav navbar-collapse">
+                    <ul class="nav" id="side-menu">
+
+                        <li>
+                        <a href="index.html"><i class="fa fa-dashboard fa-fw"></i> 数据分析</a>
+                    </li>
+                        <li>
+                            <a href="installApp.html"><i class="fa fa-dashboard fa-fw"></i> 装入APP</a>
+                        </li>
+                       
+                    </ul>
+                </div>
+                <!-- /.sidebar-collapse -->
+            </div>
+            <!-- /.navbar-static-side -->
+        </nav>
+
+        <div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header"><span id="headtitle"></span></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-12">
+
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-bar-chart-o fa-fw"></i> <span id="AppVersionDetailTitle">单应用不同版本耗电对比</span>
+                            <div class="pull-right">
+                                <div class="btn-group">
+                                    切换平台
+                                    <span id="choosePlatform1"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div id="multipleVersionchartdiv"></div>
+                            <div id="morris-area-chart"></div>
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-bar-chart-o fa-fw"></i> <span id="title">单应用对比图表</span>
+                            <div class="pull-right">
+                                <div class="btn-group">
+                                    切换图表对比模式
+                                    <select id="mySelect">
+                                        <option value="1" >同平台不同模块耗电情况</option>
+                                        <option value="2" selected="selected">不同平台同模块耗电情况</option>
+                                    </select>
+                                    <span id="change"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div id="morris-bar-chart"></div>
+                        </div>
+                        <!-- /.panel-body -->
+
+                    </div>
+                    <!-- /.panel -->
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    APP耗电情况数据表
+                                </div>
+                                <!-- /.panel-heading -->
+                                <div class="panel-body">
+                                    <div id="datatables1">
+                                        </div>
+                                    <div class="flot-chart">
+                                        <div class="flot-chart-content" id="flot-pie-chart"></div>
+                                    </div>
+                                </div>
+                                <!-- /.panel-body -->
+                            </div>
+
+                            <!-- /.panel -->
+                        </div>
+                        <!-- /.col-lg-12 -->
+                    </div>
+                    <!-- /.panel -->
+                    <!-- /.panel -->
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    多应用对比图表
+                                    <div class="pull-right">
+                                        <div class="btn-group">
+                                            <span id="tagchange"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /.panel-heading -->
+                                <div class="panel-body">
+                                    <div id="tagtable">
+
+                                        </div>
+                                    <div class="panel-body">
+                                        <div id="morris-bar-chart2"></div>
+                                    </div>
+                                </div>
+                                <!-- /.panel-body -->
+                            </div>
+                            <!-- /.panel -->
+                        </div>
+                        <!-- /.col-lg-12 -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+                <!-- /.col-lg-4 -->
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+
+
+    <!-- jQuery -->
+    <script src="../vendor/jquery/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="../vendor/metisMenu/metisMenu.min.js"></script>
+
+    <!-- DataTables JavaScript -->
+    <script src="../vendor/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="../vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
+    <script src="../vendor/datatables-responsive/dataTables.responsive.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="../dist/js/sb-admin-2.js"></script>
+
+    <!-- Flot Charts JavaScript -->
+    <script src="../vendor/flot/excanvas.min.js"></script>
+    <script src="../vendor/flot/jquery.flot.js"></script>
+    <script src="../vendor/flot/jquery.flot.pie.js"></script>
+    <script src="../vendor/flot/jquery.flot.resize.js"></script>
+    <script src="../vendor/flot/jquery.flot.time.js"></script>
+    <script src="../vendor/flot-tooltip/jquery.flot.tooltip.min.js"></script>
+
+    <!-- Morris Charts JavaScript -->
+    <script src="../vendor/raphael/raphael.min.js"></script>
+    <script src="../vendor/morrisjs/morris.min.js"></script>
+    <!-- 表格数据 -->
+    <script>
+
+        var appId = "";
+        var appName = "";
+
+        var barchart1_data = [{
+            x: '请选择对比内容',
+            y: 0,
+            ya:0,
+        }];
+        function barchart1(data) {
+            Morris.Bar({
+                element: 'morris-bar-chart',
+                data: data,
+                xkey: 'x',
+                ykeys: ['y','ya'],
+                labels: ['最新版本数据','历来版本数据平均值'],
+                hideHover: 'auto',
+                resize: true
+            });
+        }
+        barchart1(barchart1_data);
+
+        var areachart_data = [{
+            x: '选择平台',
+            a:0,
+            b:0,
+            c:0,
+            d:0,
+            e:0,
+            f:0,
+            g:0,
+            h:0
+        }];
+        function areachart(data) {
+            Morris.Area({
+                element:'morris-area-chart',
+                data: data,
+                xkey: 'x',
+                ykeys: ['a', 'b', 'c','d','e','f','g','h'],
+                labels: ['total', 'cpu', 'radio','wake','wifi','gps','sensor','camera'],
+                pointSize: 2,
+                hideHover: 'auto',
+                resize: true
+            });
+        }
+        areachart(areachart_data);
+
+        var barchart2_data = [{
+            x: '请点击单选框以获得数据',
+            y: 0,
+            ya:0,
+            yb:0
+        }];
+        function barchart2(data) {
+            Morris.Bar({
+                element: 'morris-bar-chart2',
+                data: data,
+                xkey: 'x',
+                ykeys: ['y','ya','yb'],
+                labels: ['数据','平均值','对比值'],
+                hideHover: 'auto',
+                resize: true
+            });
+        }
+        barchart2(barchart2_data);
+
+        var piechart_data = [{
+            label: "test",
+            data: 1
+        }];
+
+        function piechart(data) {
+            var plotObj = $.plot($("#flot-pie-chart"), data, {
+                series: {
+                    pie: {
+                        show: true
+                    }
+                },
+                grid: {
+                    hoverable: true
+                },
+                tooltip: true,
+                tooltipOpts: {
+                    content: "%p.0%, %s", // show percentages, rounding to 2 decimal places
+                    shifts: {
+                        x: 20,
+                        y: 0
+                    },
+                    defaultTheme: false
+                }
+            });
+        }
+        piechart(piechart_data);
+
+    </script>
+
+
+    <!-- ajax -->
+    <script>
+        function ajaxchartdata(type,detail) {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    barchart1_data = JSON.parse(xmlhttp.responseText);
+                    barchart1(barchart1_data);
+
+                }
+            }
+            xmlhttp.open("GET", "/barchart1?q="+"&appId="+window.appId +"&type="+type+"&detail="+detail,true);
+            xmlhttp.send();
+        }
+        function areadata(platform) {
+            appId = "test";
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    areachart_data = JSON.parse(xmlhttp.responseText);
+                    areachart(areachart_data);
+                }
+            }
+            xmlhttp.open("GET", "/areachart?q="+"&appId="+window.appId  +"&platform="+platform,true);
+            xmlhttp.send();
+        }
+
+    </script>
+
+    <!-- jquery select -->
+    <script language="javascript" type="text/javascript">
+        function change(){
+            if($(this).children('option:selected').val()=='1'){
+                var xmlhttp = new XMLHttpRequest();
+                xmlhttp.onreadystatechange = function () {
+                        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                            $('#change').html("&nbsp 选择平台"+xmlhttp.responseText);
+                            $('#choosePlatform_2').change(function(){
+                                if($(this).children('option:selected').val()!='0') {
+                                    $('#morris-bar-chart').html("");
+                                    ajaxchartdata('platform', $(this).children('option:selected').text())
+                                    $('#title').html($(this).children('option:selected').text() + "平台下不同模块耗电对比");
+                                }
+
+                            })
+                        }
+                }
+                xmlhttp.open("GET", "/choosePlatform2?q="+"&appId="+window.appId,true);
+                xmlhttp.send();
+            }
+            else{
+                $('#change').html("  &nbsp 选择模块 <select id=\"changemodel\"><option value=\"0\" selected=\"selected\">请选择模块</option> <option value=\"1\">CPU</option> <option value=\"2\" >radio</option> <option value=\"3\" >wake</option><option value=\"4\" >wifi</option><option value=\"5\" >gps</option><option value=\"6\" >sensor</option><option value=\"7\" >camera</option></select>")
+                $('#changemodel').change(function(){
+                    if($(this).children('option:selected').val()!='0') {
+                        $('#morris-bar-chart').html("");
+                        ajaxchartdata('module', $(this).children('option:selected').text())
+                        $('#title').html($(this).children('option:selected').text() + "模块在不同平台耗电对比");
+                    }
+                })
+            }
+        }
+        $(document).ready(function(){
+            $('#dataTables-example').DataTable({
+                responsive: true
+            });
+            $('#dataTables-example2').DataTable({
+                responsive: true
+            });
+            $('#mySelect').change(change)
+            change()
+            datatable1_set()
+            tagchange_set()
+            tagchart_set()
+            choosePlatform1_set()
+
+            var temp = window.location.toString();
+            appId = temp.substring(temp.indexOf("id=")+3,temp.indexOf('&'))
+            appName = decodeURIComponent(temp.substring(temp.indexOf("name=")+5));
+
+            $('#headtitle').html(appName);
+        })
+
+                function changepiechart(){
+                    $(":radio[name=\"piechart\"]").click(function(){
+                        var tempn = $(this).val();
+                     var tr = $("#dataTables-example tr:eq("+tempn+")").text().trim();
+                        var trtext = tr.split("\n");
+                        var module1 = trtext[1].trim();
+                        var module2 = trtext[2].trim();
+                        var module3 = trtext[3].trim();
+                        var module4 = trtext[4].trim();
+                        var module5 = trtext[5].trim();
+                        var module6 = trtext[6].trim();
+                        var module7 = trtext[7].trim();
+
+
+                        var piechart_data = [{
+                            label: "cpu",
+                            data: module1
+                        }, {
+                            label: "radio",
+                            data: module2
+                        }, {
+                            label: "wake",
+                            data: module3
+                        }, {
+                            label: "wifi",
+                            data: module4
+                        }, {
+                            label: "gps",
+                            data: module5
+                        }, {
+                            label: "sensor",
+                            data: module6
+                        }, {
+                            label: "camera",
+                            data: module7
+                        }];
+                        piechart(piechart_data);
+                    });
+                };
+        function multipleVersionchart_set(){
+            multipleVersionchart("小米");
+        }
+
+        function multipleVersionchart(platform) {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    $('#multipleVersionchartdiv').html(xmlhttp.responseText);
+                    /*
+                    $('#multipleVersionchart_table').DataTable({
+                        responsive: true
+                    });*/
+                }
+            }
+            xmlhttp.open("GET", "/multipleVersionchart?q=" +"&appId="+window.appId +"&platform="+platform,true);
+            xmlhttp.send();
+        }
+
+
+        function datatable1_set(){
+            ajaxdatatable1setdata("test");
+        }
+
+            function ajaxdatatable1setdata(appId) {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    $('#datatables1').html(xmlhttp.responseText);
+                    changepiechart();
+                    $('#dataTables-example').DataTable({
+                        responsive: true
+                    });
+                }
+            }
+            xmlhttp.open("GET", "/AppDetailForm?q=" +"&appId="+window.appId ,true);
+            xmlhttp.send();
+        }
+
+        function choosePlatform1_set(){
+            choosePlatform1("test");
+        }
+        function choosePlatform1(appId) {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    $('#choosePlatform1').html(xmlhttp.responseText);
+                    $('#choosePlatform_1').change(function(){
+                        $('#morris-area-chart').html("");
+                        multipleVersionchart($(this).children('option:selected').text());
+                        areadata( $(this).children('option:selected').text())
+                    })
+                }
+            }
+            xmlhttp.open("GET", "/choosePlatform1?q=" +"&appId="+window.appId ,true);
+            xmlhttp.send();
+        }
+
+        function  tagchange_set() {
+            tagchange("test");
+        }
+
+        function GetAppPlatform(appId) {
+        }
+
+        function tagchange(appId) {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    $('#tagchange').html(xmlhttp.responseText);
+                    $('#tag_choose').change(function(){
+                        tagchart( $(this).children('option:selected').text())
+                    })
+                }
+            }
+            xmlhttp.open("GET", "/getAppTag?q=" +"&appId="+window.appId ,true);
+            xmlhttp.send();
+        }
+
+        function tagchart_set(){
+            tagchart("testtag");
+        }
+        function tagchart(tag) {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    $('#tagtable').html(xmlhttp.responseText);
+                    changebarchart2();
+                    $('#dataTables-example2').DataTable({
+                        responsive: true
+                    });
+                }
+            }
+            xmlhttp.open("GET", "/tagchart?q=" +"&appid="+window.appId +"&tag="+tag,true);
+            xmlhttp.send();
+        }
+
+        function changebarchart2(){
+            $(":radio[name=\"datatables2\"]").click(function(){
+                var tempn = $(this).val();
+                var tr = $("#dataTables-example2 tr:eq("+tempn+")").text().trim();
+                var trtext = tr.split("\n");
+                var module1 = trtext[1].trim();
+                var module2 = trtext[2].trim();
+                var module3 = trtext[3].trim();
+                var module4 = trtext[4].trim();
+                var module5 = trtext[5].trim();
+                var module6 = trtext[6].trim();
+                var module7 = trtext[7].trim();
+                var module8 = trtext[8].trim();
+                //[8]不知道为啥是空格
+
+                var tra = $("#dataTables-example2 tr:eq(1)").text().trim();
+                var trtexta= tra.split("\n");
+                var amodule1 = trtexta[1].trim();
+                var amodule2 = trtexta[2].trim();
+                var amodule3 = trtexta[3].trim();
+                var amodule4 = trtexta[4].trim();
+                var amodule5 = trtexta[5].trim();
+                var amodule6 = trtexta[6].trim();
+                var amodule7 = trtexta[7].trim();
+                var amodule8 = trtexta[8].trim();
+
+                var trb = $("#dataTables-example2 tr:eq(2)").text().trim();
+                var trtextb= trb.split("\n");
+                var bmodule1 = trtextb[1].trim();
+                var bmodule2 = trtextb[2].trim();
+                var bmodule3 = trtextb[3].trim();
+                var bmodule4 = trtextb[4].trim();
+                var bmodule5 = trtextb[5].trim();
+                var bmodule6 = trtextb[6].trim();
+                var bmodule7 = trtextb[7].trim();
+                var bmodule8 = trtextb[8].trim();
+
+                var barchart2_data = [{
+                    x: '总共',
+                    y: module1,
+                    ya:amodule1,
+                    yb:bmodule1
+                },
+                    {
+                        x: 'cpu',
+                        y: module2,
+                        ya: amodule2,
+                        yb:bmodule2
+                    },
+                    {
+                        x: 'radio',
+                        y: module3,
+                        ya: amodule3,
+                        yb:bmodule3
+                    },
+                    {
+                        x: 'wake',
+                        y: module4,
+                        ya: amodule4,
+                        yb:bmodule4
+                    },
+                    {
+                        x: 'wifi',
+                        y: module5,
+                        ya: amodule5,
+                        yb:bmodule5
+                    },
+                    {
+                        x: 'gps',
+                        y: module6,
+                        ya: amodule6,
+                        yb:bmodule6
+                    },
+                    {
+                        x: 'sensor',
+                        y: module7,
+                        ya: amodule7,
+                        yb:bmodule7
+                    },
+                    {
+                        x: 'camera',
+                        y: module8,
+                        ya: amodule8,
+                        yb:bmodule8
+                    }];
+                $('#morris-bar-chart2').html("");
+                barchart2(barchart2_data);
+            });
+        };
+
+
+    </script>
+</body>
+
+</html>

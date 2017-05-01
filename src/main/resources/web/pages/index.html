@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>安卓应用电量分析系统</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- MetisMenu CSS -->
+    <link href="../vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+
+    <!-- DataTables CSS -->
+    <link href="../vendor/datatables-plugins/dataTables.bootstrap.css" rel="stylesheet">
+
+    <!-- DataTables Responsive CSS -->
+    <link href="../vendor/datatables-responsive/dataTables.responsive.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="../dist/css/sb-admin-2.css" rel="stylesheet">
+
+    <!-- Morris Charts CSS -->
+    <link href="../vendor/morrisjs/morris.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="index.html">安卓应用电量分析系统</a>
+            </div>
+            <!-- /.navbar-header -->
+
+            <!-- /.navbar-top-links -->
+
+            <div class="navbar-default sidebar" role="navigation">
+                <div class="sidebar-nav navbar-collapse">
+                    <ul class="nav" id="side-menu">
+                        <li>
+                        <a href="index.html"><i class="fa fa-dashboard fa-fw"></i> 数据分析</a>
+                    </li>
+                        <li>
+                            <a href="installApp.html"><i class="fa fa-dashboard fa-fw"></i> 装入APP</a>
+                        </li>
+                       
+                    </ul>
+                </div>
+                <!-- /.sidebar-collapse -->
+            </div>
+            <!-- /.navbar-static-side -->
+        </nav>
+
+        <div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">应用查找</h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+                <div class="panel panel-default">
+            <div class="panel-heading">
+                    <fieldset>
+                        <br>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <input class="form-control" id="searchContent" name="查找关键词" autofocus>
+                            </div>
+                        </div>
+                        <div class="col-lg-1">
+                            <a href="index.html" id="searchButton" class="btn btn-primary">查找</a>
+                        </div>
+                    </fieldset>
+
+            </div>
+        </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                查找结果
+                            </div>
+                            <!-- /.panel-heading -->
+                            <div class="panel-body">
+                                     <span id="searchResultForm"></span>
+                                    <div class="col-lg-1">
+                                    </div>
+                                    <div class="col-lg-10">
+                                        <input type ="submit" id="getappreport" class="btn btn-primary btn-lg btn-block" value ="查看电量分析结果">
+                                    </div>
+
+                            </div>
+                            <!-- /.panel-body -->
+                        </div>
+                        <!-- /.panel -->
+                    </div>
+                    <!-- /.col-lg-12 -->
+</div>
+                </div>
+            </div>
+
+
+            </div>
+    </div>
+
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+
+
+    <!-- jQuery -->
+    <script src="../vendor/jquery/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="../vendor/metisMenu/metisMenu.min.js"></script>
+
+    <!-- DataTables JavaScript -->
+    <script src="../vendor/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="../vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
+    <script src="../vendor/datatables-responsive/dataTables.responsive.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="../dist/js/sb-admin-2.js"></script>
+
+    <!-- Morris Charts JavaScript -->
+    <script src="../vendor/raphael/raphael.min.js"></script>
+    <script src="../vendor/morrisjs/morris.min.js"></script>
+    <!-- 表格数据 -->
+
+    <!-- jquery select -->
+    <script language="javascript" type="text/javascript">
+
+        function tagchart(detail) {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    $('#searchResultForm').html(xmlhttp.responseText);
+                }
+            }
+            xmlhttp.open("GET", "/searchapp?q=" +"&detail="+detail,true);
+            xmlhttp.send();
+        }
+
+        window.onload=function(){
+            var o_btn=document.getElementById("searchButton");
+            o_btn.addEventListener("click",function(e){
+                e.preventDefault();
+                tagchart($('#searchContent').val());
+            },false)
+
+            var o_btn2=document.getElementById("getappreport");
+            o_btn2.addEventListener("click",function(e){
+                e.preventDefault();
+                var tempn = $("input[name=ChooseApp]:checked").val();
+                var tr = $("#searchTable tr:eq("+tempn+")").text().trim();
+                var trtext = tr.split("\n");
+                var appId = trtext[0].trim();
+                var appName = trtext[1].trim();
+                window.location.href = "/web/pages/statics_analyse.html?id="+appId+"&name="+appName;
+            },false)
+        }
+    </script>
+</body>
+
+</html>
