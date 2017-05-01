@@ -17,6 +17,12 @@ public class Servlet_AppDetailForm extends HttpServlet {
 
     }
 
+    /**
+     * 调用AppDetailForm(String appId)
+     *   根据appid返回一个app在各个平台下所有模块的耗电量
+         返回值[i][j],[j0]是平台，后续的[j1][j2]...按照cpu,radio,wake,wifi,gps,sensor,camera顺序
+     */
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String data = "";
         String appId = request.getParameter("appid");

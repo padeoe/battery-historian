@@ -175,6 +175,21 @@
                         <!-- /.col-lg-12 -->
                     </div>
                     <!-- /.panel -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-bar-chart-o fa-fw"></i> 单应用MMPP对比
+                            <div class="pull-right">
+                                <div class="btn-group">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div id="morris-bar-chart-mspp"></div>
+                        </div>
+                        <!-- /.panel-body -->
+
+                    </div>
                 </div>
                 <!-- /.col-lg-4 -->
             </div>
@@ -238,6 +253,23 @@
             });
         }
         barchart1(barchart1_data);
+
+        var barchartMSPP_data = [{
+            x: '测试',
+            y: 0,
+        }];
+        function barchartMSPP(data) {
+            Morris.Bar({
+                element: 'morris-bar-chart-mspp',
+                data: data,
+                xkey: 'x',
+                ykeys: ['y'],
+                labels: ['MSPP值'],
+                hideHover: 'auto',
+                resize: true
+            });
+        }
+        barchartMSPP(barchartMSPP_data);
 
         var areachart_data = [{
             x: '选择平台',
@@ -322,14 +354,12 @@
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                     barchart1_data = JSON.parse(xmlhttp.responseText);
                     barchart1(barchart1_data);
-
                 }
             }
             xmlhttp.open("GET", "/barchart1?q="+"&appId="+window.appId +"&type="+type+"&detail="+detail,true);
             xmlhttp.send();
         }
         function areadata(platform) {
-            appId = "test";
             var xmlhttp = new XMLHttpRequest();
             xmlhttp.onreadystatechange = function () {
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
@@ -513,10 +543,22 @@
             xmlhttp.open("GET", "/getAppTag?q=" +"&appId="+window.appId ,true);
             xmlhttp.send();
         }
+        function barchartMSPP() {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    barchartMSPP_data = JSON.parse(xmlhttp.responseText);
+                    barchartMSPP(barchartMSPP_data);
+                }
+            }
+            xmlhttp.open("GET", "/Servlet_getMSPP?q=" +"&appid="+window.appId ,true);
+            xmlhttp.send();
+        }
 
         function tagchart_set(){
             tagchart("testtag");
         }
+
         function tagchart(tag) {
             var xmlhttp = new XMLHttpRequest();
             xmlhttp.onreadystatechange = function () {

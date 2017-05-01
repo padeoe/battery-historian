@@ -15,7 +15,12 @@ public class Servlet_tagchart extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
     }
-
+/*
+* 调用String[][] MultipleAppForm (String appId, String tag)
+  根据appId和tag，返回在此tag下，所有APP在所有平台下每个模块的耗电平均值
+  返回值[i][j],[j0]是APP名称，后续的[j1][j2]...按照合计,cpu,radio,wake,wifi,gps,sensor,camera的顺序
+  [i0]是此tag下所有app的平均值，[i0][j0]=”平均”，[i1]是测试应用的信息，[i2]之后随便排列同tag下的app数据。
+* */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String data = "";
         response.setContentType("application/json;charset=utf-8");

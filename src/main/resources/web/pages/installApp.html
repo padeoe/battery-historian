@@ -86,8 +86,6 @@
                     <fieldset>
                         <br>
                         <div class="col-lg-1">
-
-                            <form action="" method="get">
                             <input name="upload"   type="file" style="width:72px;height:34px" id="t_file" onchange="onchangetop()" >
                             <!-- opacity是透明度  这里写20是为了方便浏览，使用时应设置为0 -->
                         </div>
@@ -113,44 +111,25 @@
                             <div class="panel-body">
 
                                     <div class="form-group">
-                                        输入TAG，用"、"隔开
-                                        <input class="form-control" name="TAG" >
+                                        输入TAG，用";"隔开(至少有一个tag)
+                                        <input class="form-control" id="TagContent" >
                                     </div>
                                 <div class="form-group">
                                     输入备注
-                                    <input class="form-control" name="TAG" >
+                                    <input class="form-control" id="DetailContent" >
                                 </div>
 
+                                <span id="platformDetailForm"></span>
 
-                                <table width="100%" class="table" id="result">
-                                    <thead>
-                                    <tr>
-                                        <th width="45" align="center">选择</th>
-                                        <th width="200">平台名称</th>
-                                        <th>描述</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td align="center"><label><input name="Fruit" type="radio" value="1" /></label> </td>
-                                        <td>小米</td>
-                                        <td>1代，CPU很厉害</td>
-                                    </tr>
-                                    <tr>
-                                        <td align="center"><label><input name="Fruit" type="radio" value="2" /></label> </td>
-                                        <td>三星</td>
-                                        <td>GETS</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
                                     <div class="col-lg-1">
                                         </div>
                                     <div class="col-lg-10">
                                     <input type ="submit" class="btn btn-primary btn-lg btn-block" value ="安装APP并进行分析">
                                         </div>
 
-                                    </form>
                             </div>
+                        </div>
+                    </div>
                             <!-- /.panel-body -->
                         </div>
                         <!-- /.panel -->
@@ -197,48 +176,25 @@
             fileName.value = t_file.value;
         }
 
-        function ajaxchartdata(type,detail) {
+        function multipleVersionchart() {
             var xmlhttp = new XMLHttpRequest();
             xmlhttp.onreadystatechange = function () {
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                    data = xmlhttp.responseText;
+                    $('#platformDetailForm').html(xmlhttp.responseText);
+                     $('#choosePlatformForm').DataTable({
+                     responsive: true
+                     });
                 }
             }
-            xmlhttp.open("GET", "/ajax/gethint.asp?q=" + str +"&key=",true);
+            xmlhttp.open("GET", "/Servlet_getPlatformData?q=" ,true);
             xmlhttp.send();
         }
+
     </script>
 
     <!-- jquery select -->
     <script language="javascript" type="text/javascript">
-        function change(){
-            if($(this).children('option:selected').val()=='1'){
-                $('#change').html("  &nbsp 选择平台 <select id=\"changeplatform\"> <option value=\"0\" selected=\"selected\">请选择平台</option> <option value=\"1\" >1号</option> <option value=\"2\" >2号</option> </select>")
-                $('#changeplatform').change(function(){
-                        $('#morris-bar-chart').html("");
-                        //ajaxchartdata('platform',$(this).children('option:selected').text())
-                          $('#title').html($(this).children('option:selected').text()+"平台下不同模块耗电对比");
-                        test(data);
-                })
-            }
-            else{
-                $('#change').html("  &nbsp 选择模块 <select id=\"changemodel\"><option value=\"0\" selected=\"selected\">请选择模块</option> <option value=\"1\">1号</option> <option value=\"2\" >2号</option> </select>")
-                $('#changemodel').change(function(){
-                        $('#morris-bar-chart').html("");
-                        //ajaxchartdata('module',$(this).children('option:selected').text())
-                      $('#title').html($(this).children('option:selected').text()+"模块在不同平台耗电对比");
-                        test(data);
 
-                })
-            }
-        }
-        $(document).ready(function(){
-            $('#dataTables-example').DataTable({
-                responsive: true
-            });
-            $('#mySelect').change(change)
-            change()
-        })
 
     </script>
 

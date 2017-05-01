@@ -15,7 +15,11 @@ public class Servlet_multipleVersionchart extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
     }
-
+/*
+调用  String[][] AppVersionDetail(String appId, String platformId)
+  用于传递一个app在不同平台下不同版本下的各模块电量消耗变更
+  返回值[i][j],[j0]是总电量，后续的[j1][j2]...按照总电量,cpu,radio,wake,wifi,gps,sensor,camera顺序
+ */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String data = "";
         response.setContentType("application/json;charset=utf-8");

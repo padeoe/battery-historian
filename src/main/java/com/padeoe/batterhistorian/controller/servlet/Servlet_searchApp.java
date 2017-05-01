@@ -15,6 +15,11 @@ public class Servlet_searchApp extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
     }
+/*
+调用String[][] SearchApp(String detail)
+获得所有与查找内容相符的内容。根据关键词，查找名称中含有关键词的应用，并返回信息。
+[j0]为应用ID，[j1]为应用名称，[j2]为最新版本号，[j3]为详细描述
+ */
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
          String data = "";
