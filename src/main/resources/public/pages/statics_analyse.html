@@ -269,7 +269,6 @@
                 resize: true
             });
         }
-        barchartMSPP(barchartMSPP_data);
 
         var areachart_data = [{
             x: '选择平台',
@@ -543,17 +542,19 @@
             xmlhttp.open("GET", "/getAppTag?q=" +"&appId="+window.appId ,true);
             xmlhttp.send();
         }
-        function barchartMSPP() {
+        function barchartMSPP_draw() {
             var xmlhttp = new XMLHttpRequest();
             xmlhttp.onreadystatechange = function () {
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+
                     barchartMSPP_data = JSON.parse(xmlhttp.responseText);
                     barchartMSPP(barchartMSPP_data);
                 }
             }
-            xmlhttp.open("GET", "/Servlet_getMSPP?q=" +"&appid="+window.appId ,true);
+            xmlhttp.open("GET", "/getMSPP?q=" +"&appId="+window.appId ,true);
             xmlhttp.send();
         }
+        barchartMSPP_draw();
 
         function tagchart_set(){
             tagchart("testtag");

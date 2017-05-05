@@ -74,7 +74,7 @@
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header">添加应用</h1>
+                    <h1 class="page-header">应用查找</h1>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -82,54 +82,36 @@
             <div class="row">
                 <div class="panel panel-default">
             <div class="panel-heading">
-
                     <fieldset>
                         <br>
-                        <div class="col-lg-1">
-                            <input name="upload"   type="file" style="width:72px;height:34px" id="t_file" onchange="onchangetop()" >
-                            <!-- opacity是透明度  这里写20是为了方便浏览，使用时应设置为0 -->
-                        </div>
-                        <div class="col-lg-11">
+                        <div class="col-lg-6">
                             <div class="form-group">
-                                <input class="form-control" name="查找关键词" disabled="true" id="fileName" value="">
+                                <input class="form-control" id="searchContent" name="查找关键词" autofocus>
                             </div>
                         </div>
-
+                        <div class="col-lg-1">
+                            <a href="index.html" id="searchButton" class="btn btn-primary">查找</a>
+                        </div>
                     </fieldset>
 
-
-                </div>
             </div>
         </div>
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                               高级选项
+                                查找结果
                             </div>
                             <!-- /.panel-heading -->
                             <div class="panel-body">
-
-                                    <div class="form-group">
-                                        输入TAG，用";"隔开(至少有一个tag)
-                                        <input class="form-control" id="TagContent" >
-                                    </div>
-                                <div class="form-group">
-                                    输入备注
-                                    <input class="form-control" id="DetailContent" >
-                                </div>
-
-                                <span id="platformDetailForm"></span>
-
+                                     <span id="searchResultForm"></span>
                                     <div class="col-lg-1">
-                                        </div>
+                                    </div>
                                     <div class="col-lg-10">
-                                    <input type ="submit" class="btn btn-primary btn-lg btn-block" value ="安装APP并进行分析">
-                                        </div>
+                                        <input type ="submit" id="getappreport" class="btn btn-primary btn-lg btn-block" value ="查看电量分析结果">
+                                    </div>
 
                             </div>
-                        </div>
-                    </div>
                             <!-- /.panel-body -->
                         </div>
                         <!-- /.panel -->
@@ -167,46 +149,42 @@
     <!-- Custom Theme JavaScript -->
     <script src="../dist/js/sb-admin-2.js"></script>
 
-    <!-- ajax -->
-    <script>
-        var t_file = document.getElementById("t_file");
-        var fileName = document.getElementById("fileName");
-
-        function onchangetop(){
-            fileName.value = t_file.value;
-        }
-
-        function multipleVersionchart() {
-            var xmlhttp = new XMLHttpRequest();
-            xmlhttp.onreadystatechange = function () {
-                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                    $('#platformDetailForm').html(xmlhttp.responseText);
-                     $('#choosePlatformForm').DataTable({
-                     responsive: true
-                     });
-                }
-            }
-            xmlhttp.open("GET", "/Servlet_getPlatformData?q=" ,true);
-            xmlhttp.send();
-        }
-
-    </script>
+    <!-- Morris Charts JavaScript -->
+    <script src="../vendor/raphael/raphael.min.js"></script>
+    <script src="../vendor/morrisjs/morris.min.js"></script>
+    <!-- 表格数据 -->
 
     <!-- jquery select -->
     <script language="javascript" type="text/javascript">
 
+        function tagchart(detail) {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    $('#searchResultForm').html(xmlhttp.responseText);
+                }
+            }
+            xmlhttp.open("GET", "/searchapp?q=" +"&detail="+detail,true);
+            xmlhttp.send();
+        }
 
-    </script>
+        window.onload=function(){
+            var o_btn=document.getElementById("searchButton");
+            o_btn.addEventListener("click",function(e){
+                e.preventDefault();
+                tagchart($('#searchContent').val());
+            },false)
 
-    <!-- 上传文件 -->
-    <script type="text/javascript">
-        function fclick(obj){
-            obj.style.posTop=event.srcElement.offsetTop
-            var x=event.x-obj.offsetWidth/2
-            if(x<event.srcElement.offsetLeft)x=event.srcElement.offsetLeft
-            if(x>event.srcElement.offsetLeft+event.srcElement.offsetWidth-obj.offsetWidth)x=event.srcElement.offsetLeft+event.srcElement.offsetWidth-obj.offsetWidth
-            obj.style.posLeft=x
-            //$('#appname').value="test";
+            var o_btn2=document.getElementById("getappreport");
+            o_btn2.addEventListener("click",function(e){
+                e.preventDefault();
+                var tempn = $("input[name=ChooseApp]:checked").val();
+                var tr = $("#searchTable tr:eq("+tempn+")").text().trim();
+                var trtext = tr.split("\n");
+                var appId = trtext[0].trim();
+                var appName = trtext[1].trim();
+                window.location.href = "/pages/statics_analyse.html?id="+appId+"&name="+appName;
+            },false)
         }
     </script>
 </body>
