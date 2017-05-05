@@ -10,7 +10,7 @@ import java.io.IOException;
 /**
  * Created by zafara on 2017/4/30.
  */
-@WebServlet(urlPatterns = "/Servlet_choosePlatform1")
+@WebServlet(urlPatterns = "/choosePlatform1")
 public class Servlet_choosePlatform1 extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 

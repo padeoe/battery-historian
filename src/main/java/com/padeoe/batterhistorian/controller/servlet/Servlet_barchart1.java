@@ -21,7 +21,6 @@ public class Servlet_barchart1 extends HttpServlet {
      用于传递一个APP在相同平台下不同模块的，或是相同模块下不同平台，最新版本APP的耗电量和所有版本APP耗电量的平均值
      PlatFormOrModule 是true就是同平台不同模块的信息，是false就是同模块不同平台的信息。id用于寻找APP，detail用于传平台ID或者模块名称
      返回值[i][j]，[j0]是平台/模块名称，[j1]是最新版本APP耗电量，[j2]是所有版本平均耗电量
-
      */
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
