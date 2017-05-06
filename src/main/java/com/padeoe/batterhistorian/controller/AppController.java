@@ -43,4 +43,15 @@ public class AppController {
     public @ResponseBody Iterable<App> getMyApp() {
         return appRepository.myApp();
     }
+    @GetMapping(path="/search")
+    public @ResponseBody Iterable<App> searchApp(@RequestParam String kw){
+        return appRepository.searchApp(kw);
+    }
+
+    @GetMapping(path="/test")
+    public String sayHello(){
+        return "web/aaa.txt";
+    }
+
+
 }

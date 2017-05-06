@@ -17,8 +17,19 @@ public class Record {
     private String deviceId;
     private String module;
     private String consumption;
+    private double msapp;
 
     public Record() {
+    }
+
+    public Record(int id, Date time, String appId, String deviceId, String module, String consumption, double msapp) {
+        this.id = id;
+        this.time = time;
+        this.appId = appId;
+        this.deviceId = deviceId;
+        this.module = module;
+        this.consumption = consumption;
+        this.msapp = msapp;
     }
 
     public Record(int id, Date time, String appId, String deviceId, String module, String consumption) {
@@ -30,6 +41,8 @@ public class Record {
         this.consumption = consumption;
     }
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     public int getId() {
         return id;
     }
@@ -78,6 +91,14 @@ public class Record {
 
     public void setConsumption(String consumption) {
         this.consumption = consumption;
+    }
+
+    public double getMsapp() {
+        return msapp;
+    }
+
+    public void setMsapp(double msapp) {
+        this.msapp = msapp;
     }
 }
 

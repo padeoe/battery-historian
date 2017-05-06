@@ -18,4 +18,11 @@ public interface RecordRepository extends CrudRepository<Record,Long>{
     @Query("select record.deviceId from Record record where record.appId=?1")
     List<Device> getTestedDevices(String appId);
 
+    /**
+     * 获取特定app的测试记录
+     * @param appId app的id
+     * @return 测试记录
+     */
+    List<Record>getRecordsByAppId(String appId);
+
 }

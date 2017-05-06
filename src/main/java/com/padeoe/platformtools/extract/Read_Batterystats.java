@@ -1,6 +1,7 @@
 package com.padeoe.platformtools.extract;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -12,23 +13,25 @@ import java.util.List;
 public class Read_Batterystats {
     static private String pathOfBatterystats = "F:\\sdk\\platform-tools";
     static private String nameOfBatterystats = "batterystats.txt";
-    static private String finalpath = pathOfBatterystats+'\\'+nameOfBatterystats;
+    static private String finalpath;
 
     //修改name为文件名称，path为路径
     public void setNameAndPath(String name,String path){
         if (name!=null){
-            pathOfBatterystats = path;
-        }
-        if (path!=null){
             nameOfBatterystats = name;
         }
+        if (path!=null){
+            pathOfBatterystats = path;
+        }
+        finalpath = pathOfBatterystats+System.getProperty("file.separator")+nameOfBatterystats;
+
     }
 
 //取batterystats文件，并返回每行组成的stringp[]
    public List<String> read(){
        List<String> stringList = null;
        try {
-           stringList = Files.readAllLines(Paths.get(finalpath));
+           stringList = Files.readAllLines(Paths.get(finalpath), StandardCharsets.UTF_16LE);
        } catch (IOException e) {
            e.printStackTrace();
        }
