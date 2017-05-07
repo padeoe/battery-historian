@@ -31,7 +31,7 @@ public class Read_Batterystats {
    public List<String> read(){
        List<String> stringList = null;
        try {
-           stringList = Files.readAllLines(Paths.get(finalpath), StandardCharsets.UTF_16LE);
+           stringList = Files.readAllLines(Paths.get(finalpath), StandardCharsets.UTF_8);
        } catch (IOException e) {
            e.printStackTrace();
        }

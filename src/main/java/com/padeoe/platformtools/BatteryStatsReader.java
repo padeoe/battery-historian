@@ -1,90 +1,23 @@
 package com.padeoe.platformtools;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by padeoe on 2017/5/2.
  */
 public class BatteryStatsReader {
-    private List<Charset> charsets = Arrays.asList(new Charset[]{StandardCharsets.UTF_8, StandardCharsets.UTF_16,
-            StandardCharsets.UTF_16BE, StandardCharsets.UTF_16LE, StandardCharsets.ISO_8859_1, StandardCharsets.US_ASCII});
-    private File inputFile = new File("batterystats.txt");
-    private Charset charset = null;
 
-
-    public BatteryStats read() throws IOException {
-/*
-        String topUid;
-        String[] uids = Files.readAllLines(inputFile.toPath()).stream().filter(line -> line.indexOf("top=") != -1).toArray(String[]::new);
-        if (uids.length > 0) {
-            topUid = uids[0];
-        } else {
-            throw new Exception("inputFile");
-        }
-        =uids.length > 0 ?:null;
-*/
-
-        return null;
+    public BatteryStats read() throws IOException, StatsInfoNotFoundException, EnvironmentNotConfiguredException, InterruptedException {
+        return parseBaterryStats(getBaterryStatsText().stdString);
     }
-
-
-    public static String findTopUid(List<String> batterystats) {
-        String Uid = null;
-        boolean findUid = false;
-        for (String temp : batterystats) {
-            int start = temp.indexOf("top=");
-            if (start == -1) continue;
-            int end = temp.indexOf(':', start);
-            Uid = temp.substring(start + 4, end);
-            findUid = true;
-            break;
-        }
-        if (findUid == false) {
-            System.out.println("未找到top UID");
-        }
-        return Uid;
-    }
-
-    private void detectCharSet() {
-        boolean anyMatch = charsets.stream().anyMatch(cs -> checkCharset(cs));
-        if (!anyMatch) {
-            //   throw UnknownCharSetException();
-        }
-    }
-
-    private boolean checkCharset(Charset charset) {
-        boolean charSetRight = detectCharSet(charset);
-        if (charSetRight) this.charset = charset;
-        return charSetRight;
-    }
-
-    private boolean detectCharSet(Charset charset) {
-        try {
-            return Files.readAllLines(inputFile.toPath(), charset).stream().anyMatch(line -> line.indexOf("top=") != -1);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    public static void main(String[] args) {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("start");
-        stringBuilder.append((char) 0);
-        stringBuilder.append((char) 50);
-        System.out.println(stringBuilder.toString());
-    }
-
 
     public BatteryStats getBaterryStats() throws EnvironmentNotConfiguredException, InterruptedException, StatsInfoNotFoundException {
         ADBTool.ProcessOutput output = getBaterryStatsText();
@@ -97,23 +30,23 @@ public class BatteryStatsReader {
     }
 
     private BatteryStats parseBaterryStats(String baterryStatsText) throws StatsInfoNotFoundException {
-        int topUid = parseTopUid(baterryStatsText);
-        //TODO
-        return null;
+        String topUid = parseTopUid(baterryStatsText);
+        return new BatteryStats(parseMmpp(baterryStatsText, topUid), parsePoweruse(baterryStatsText, topUid));
     }
 
-    private int parseTopUid(String baterryStatsText) throws StatsInfoNotFoundException {
-        int topUid;
+    private String parseTopUid(String baterryStatsText) throws StatsInfoNotFoundException {
+        String topUid;
         final String TOPUIDKW = "top=";
         int start = baterryStatsText.indexOf(TOPUIDKW);
         if (start != -1) {
-            int end = start + TOPUIDKW.length();
-            try {
-                topUid = Integer.parseInt(baterryStatsText.substring(start, end));
-            } catch (RuntimeException runtimeException) {
-                throw new StatsInfoNotFoundException("", runtimeException);
+            start = start + TOPUIDKW.length();
+            int end = start;
+            for (end = start; end < baterryStatsText.length(); end++) {
+                if (baterryStatsText.charAt(end) == ':') {
+                    topUid = baterryStatsText.substring(start, end);
+                    return topUid;
+                }
             }
-            return topUid;
         }
         throw new StatsInfoNotFoundException("TopUid Not Found");
     }
@@ -123,39 +56,61 @@ public class BatteryStatsReader {
         return ADBTool.execute(commands);
     }
 
-    public Map<String, Double> parsePoweruse() {
-
-/*        Map<String,Double> result = new HashMap<>();
-        int start,end = 0;
-        boolean founded = false;
-        Pattern compile = Pattern.compile("(\\w+?)=([\\d\\.]+?) ");
-
-        for(String temp:batterystats){
-            int test = 0;
-            if(founded == false) {
-                test = temp.indexOf(EPS);
-                if (test != -1) {
-                    founded = true;
+    public Map<BatteryStats.MobileComponet, Double> parsePoweruse(String input, String uid) throws StatsInfoNotFoundException {
+        Map<BatteryStats.MobileComponet, Double> mobileComponetDoubleMap = new HashMap<>();
+        Stream<String> stringStream = Arrays.asList(input.split("\r\r\n\r\r\n")).stream().map(block -> block.trim());
+        List<String> collect = stringStream.filter(block -> block.startsWith("Estimated power use (mAh):")).collect(Collectors.toList());
+        if (collect.size() > 0) {
+            String powerText = collect.get(0);
+            if (powerText != null) {
+                for (String line : powerText.split("\r\r\n")) {
+                    if (line.trim().startsWith("Uid " + uid)) {
+                        Pattern pattern = Pattern.compile("(\\w+?)=([\\d\\.]+?) ");
+                        Matcher matcher = pattern.matcher(line);
+                        while (matcher.find()) {
+                            mobileComponetDoubleMap.put(BatteryStats.MobileComponet.fromString(matcher.group(1)), Double.parseDouble(matcher.group(2)));
+                        }
+                        break;
+                    }
                 }
-                continue;
             }
-
-            test= temp.indexOf(findkey);
-            if (test == -1) continue;
-
-            //总电量耗费能力
-            start = temp.indexOf(':', test);
-            end = temp.indexOf('(',start);
-            double total = Double.parseDouble(temp.substring(start + 1, end));
-            result.put("total",total);
-
-            Matcher matcher = compile.matcher(temp.substring(end));
-            while (matcher.find()) {
-                result.put(matcher.group(1), Double.parseDouble(matcher.group(2)));
-            }
-            break;
         }
-        return result;*/
-        return null;
+        if (mobileComponetDoubleMap.size() > 0) {
+            return mobileComponetDoubleMap;
+        } else {
+            throw new StatsInfoNotFoundException("No Power Use Info");
+        }
+    }
+
+    public double parseMmpp(String input, String uid) throws StatsInfoNotFoundException {
+        double mmpp = -1;
+        Stream<String> stringStream = Arrays.asList(input.split("\r\r\n\r\r\n")).stream().map(block -> block.trim());
+        List<String> collect = stringStream.filter(block -> block.startsWith("Per-app mobile ms per packet:")).collect(Collectors.toList());
+        if (collect.size() > 0) {
+            String block = collect.get(0);
+            if (block != null) {
+                for (String line : block.split("\r\r\n")) {
+                    if (line.trim().startsWith("Uid " + uid)) {
+                        int start = line.indexOf(": ");
+                        int end = line.indexOf(" (");
+                        if (line.indexOf(": ") != -1 && line.indexOf(" (") != -1) {
+                            try {
+                                mmpp = Double.parseDouble(line.substring(start + 2, end));
+                            } catch (Exception e) {
+                                throw new StatsInfoNotFoundException("mmpp not found");
+                            }
+
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (mmpp != -1) {
+            return mmpp;
+        } else {
+            throw new StatsInfoNotFoundException("mmpp not found");
+        }
     }
 }
