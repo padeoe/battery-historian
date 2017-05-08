@@ -5,10 +5,9 @@ import com.padeoe.batterhistorian.pojo.App;
 import com.padeoe.batterhistorian.pojo.Device;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.File;
 
 /**
  * Created by zafara on 2017/5/5
@@ -22,6 +21,13 @@ public class FrontendController {
      *   根据appid返回一个app在各个平台下所有模块的耗电量
      返回值[i][j],[j0]是平台，后续的[j1][j2]...按照cpu,radio,wake,wifi,gps,sensor,camera顺序
      */
+    @PostMapping(path="/UploadApp")
+    public @ResponseBody
+    String UploadApp(@RequestParam File fileUpload, @RequestParam String TagContent, @RequestParam String DetailContent, @RequestParam String usePlatform){
+
+        return "上传成功,请等10分钟分析解决";
+    }
+
     @GetMapping(path="/AppDetailForm")
     public @ResponseBody
     String AppDetailForm(@RequestParam String appId){
@@ -237,7 +243,7 @@ public class FrontendController {
     String getPlatformData(){
         String data = "";
 
-        String[][] tempdata= {{"苹果5S","32M内存"},{"小米","62M内存"}};
+        String[][] tempdata= {{"苹果5S","32M内存"},{"小米","62M内存"},{"大米","62M内存"}};
         // tempdata =  GetAllPlatformDetail();
 
         data = "   <table width=\"100%\" class=\"table\" id=\"choosePlatformForm\">\n" +
@@ -254,7 +260,7 @@ public class FrontendController {
         for(String[] temp:tempdata){
             data = data+
                     "                                        <tr>\n" +
-                    "                                               <td align=\"center\"><label><input name=\"Platform\" type=\"checkbox\" value=\"1\"  checked=\"checked\" /></label> </td>\n" ;
+                    "                                               <td align=\"center\"><label><input name=\"Platform\" type=\"checkbox\" id=\""+i+"\"  checked=\"checked\" /></label> </td>\n" ;
             for(String temp2: temp){
                 data = data +                    "<td>"+temp2+"</td>\n";
             }

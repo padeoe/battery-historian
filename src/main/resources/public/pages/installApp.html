@@ -82,20 +82,8 @@
             <div class="row">
                 <div class="panel panel-default">
             <div class="panel-heading">
-
-                    <fieldset>
-                        <br>
-                        <div class="col-lg-1">
-                            <input name="upload"   type="file" style="width:72px;height:34px" id="t_file" onchange="onchangetop()" >
-                            <!-- opacity是透明度  这里写20是为了方便浏览，使用时应设置为0 -->
-                        </div>
-                        <div class="col-lg-11">
-                            <div class="form-group">
-                                <input class="form-control" name="查找关键词" disabled="true" id="fileName" value="">
-                            </div>
-                        </div>
-
-                    </fieldset>
+                <form  method = 'post' action = '/UploadApp'>
+                <input type="file" name="fileUpload">
 
 
                 </div>
@@ -108,24 +96,26 @@
                                高级选项
                             </div>
                             <!-- /.panel-heading -->
-                            <div class="panel-body">
 
                                     <div class="form-group">
                                         输入TAG，用";"隔开(至少有一个tag)
-                                        <input class="form-control" id="TagContent" >
+                                        <input class="form-control" name = "TagContent" id="TagContent" >
+
                                     </div>
                                 <div class="form-group">
                                     输入备注
-                                    <input class="form-control" id="DetailContent" >
+                                    <input class="form-control" name ="DetailContent" id="DetailContent" >
                                 </div>
+                                    <input class="form-control" name ="usePlatform" id="usePlatform" style="display: none" >
 
                                 <span id="platformDetailForm"></span>
 
                                     <div class="col-lg-1">
                                         </div>
                                     <div class="col-lg-10">
-                                    <input type ="submit" class="btn btn-primary btn-lg btn-block" value ="安装APP并进行分析">
+                                    <input type ="submit" id="upload" class="btn btn-primary btn-lg btn-block" value ="安装APP并进行分析">
                                         </div>
+                                </form>
 
                             </div>
                         </div>
@@ -172,11 +162,9 @@
         var t_file = document.getElementById("t_file");
         var fileName = document.getElementById("fileName");
 
-        function onchangetop(){
-            fileName.value = t_file.value;
-        }
+        platformDetailForm();
 
-        function multipleVersionchart() {
+        function platformDetailForm() {
             var xmlhttp = new XMLHttpRequest();
             xmlhttp.onreadystatechange = function () {
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
@@ -208,6 +196,32 @@
             obj.style.posLeft=x
             //$('#appname').value="test";
         }
+
+        window.onload=function(){
+            var o_btn=document.getElementById("upload");
+            o_btn.addEventListener("click",function(e){
+                var data="";
+                table =document.getElementById("choosePlatformForm");
+                var row = table.rows.length;
+                var tr="";
+                var trtext="";
+                var platformName = "";
+                for(var i =1;i<row;i++){
+                    checkArry = document.getElementsByName("Platform")
+                    if(checkArry[i-1].checked){
+                        tr = $("#choosePlatformForm tr:eq("+i+")").text().trim();
+                        trtext = tr.split("\n");
+                        platformName = trtext[0].trim();
+                        if(platformName != "undefined"){
+                                 data = data+platformName+";";
+                          }
+                          }
+                }
+
+                $("#usePlatform").val(data);
+            },false)
+        }
+
     </script>
 </body>
 
