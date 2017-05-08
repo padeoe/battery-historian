@@ -15,7 +15,7 @@ public interface RecordRepository extends CrudRepository<Record,Long>{
     /**
      * 查询特定app在哪些设备上测试过
      */
-    @Query("select record.deviceId from Record record where record.appId=?1")
+    @Query("select distinct record.device from Record record where record.app=?1")
     List<Device> getTestedDevices(String appId);
 
     /**
@@ -24,5 +24,14 @@ public interface RecordRepository extends CrudRepository<Record,Long>{
      * @return 测试记录
      */
     List<Record>getRecordsByAppId(String appId);
+
+    /**
+     * 获取app不同版本的耗电情况
+     * @param packageName app的包名
+     * @return 测试记录
+     */
+    @Query("")
+    List<Record>getAppPowerVersionLine(String packageName);
+
 
 }

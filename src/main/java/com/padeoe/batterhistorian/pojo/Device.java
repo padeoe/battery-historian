@@ -1,11 +1,13 @@
 package com.padeoe.batterhistorian.pojo;
 
 import com.padeoe.platformtools.ADBDevice;
+import com.padeoe.platformtools.EnvironmentNotConfiguredException;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.io.IOException;
 
 /**
  * Created by padeoe on 2017/4/28.
@@ -64,5 +66,9 @@ public class Device {
 
     public void setAndroidVersion(String androidVersion) {
         this.androidVersion = androidVersion;
+    }
+
+    public static Device fromADBDevice(ADBDevice adbDevice) throws IOException, EnvironmentNotConfiguredException {
+        return new Device(adbDevice.getSerialNumber(),adbDevice.getBrand(),adbDevice.getModel(),adbDevice.getProp("ro.build.version.release"));
     }
 }

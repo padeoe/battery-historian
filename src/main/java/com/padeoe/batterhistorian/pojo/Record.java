@@ -1,44 +1,58 @@
 package com.padeoe.batterhistorian.pojo;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by padeoe on 2017/4/28.
  */
 @Entity
-public class Record {
+public class Record implements Serializable{
     private int id;
     private Date time;
-    private String appId;
-    private String deviceId;
-    private String module;
-    private String consumption;
+    private App app;
+    private Device device;
     private double msapp;
+    private double cpuPower;
+    private double radioPower;
+    private double wakePower;
+    private double wifiPower;
+    private double gpsPower;
+    private double sensorPower;
+    private double camerPower;
+
 
     public Record() {
     }
 
-    public Record(int id, Date time, String appId, String deviceId, String module, String consumption, double msapp) {
+    public Record(int id, Date time, App app, Device device, double msapp, double cpuPower, double radioPower, double wakePower, double wifiPower, double gpsPower, double sensorPower, double camerPower) {
         this.id = id;
         this.time = time;
-        this.appId = appId;
-        this.deviceId = deviceId;
-        this.module = module;
-        this.consumption = consumption;
+        this.app = app;
+        this.device = device;
         this.msapp = msapp;
+        this.cpuPower = cpuPower;
+        this.radioPower = radioPower;
+        this.wakePower = wakePower;
+        this.wifiPower = wifiPower;
+        this.gpsPower = gpsPower;
+        this.sensorPower = sensorPower;
+        this.camerPower = camerPower;
     }
 
-    public Record(int id, Date time, String appId, String deviceId, String module, String consumption) {
-        this.id = id;
+    public Record(Date time, App app, Device device, double msapp, double cpuPower, double radioPower, double wakePower, double wifiPower, double gpsPower, double sensorPower, double camerPower) {
         this.time = time;
-        this.appId = appId;
-        this.deviceId = deviceId;
-        this.module = module;
-        this.consumption = consumption;
+        this.app = app;
+        this.device = device;
+        this.msapp = msapp;
+        this.cpuPower = cpuPower;
+        this.radioPower = radioPower;
+        this.wakePower = wakePower;
+        this.wifiPower = wifiPower;
+        this.gpsPower = gpsPower;
+        this.sensorPower = sensorPower;
+        this.camerPower = camerPower;
     }
 
     @Id
@@ -59,38 +73,22 @@ public class Record {
         this.time = time;
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public String getAppId() {
-        return appId;
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    public App getApp() {
+        return app;
     }
 
-    public void setAppId(String appId) {
-        this.appId = appId;
+    public void setApp(App app) {
+        this.app = app;
     }
 
-    public String getDeviceId() {
-        return deviceId;
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    public Device getDevice() {
+        return device;
     }
 
-    public void setDeviceId(String deviceId) {
-        this.deviceId = deviceId;
-    }
-
-    public String getModule() {
-        return module;
-    }
-
-    public void setModule(String module) {
-        this.module = module;
-    }
-
-    public String getConsumption() {
-        return consumption;
-    }
-
-    public void setConsumption(String consumption) {
-        this.consumption = consumption;
+    public void setDevice(Device device) {
+        this.device = device;
     }
 
     public double getMsapp() {
@@ -99,6 +97,62 @@ public class Record {
 
     public void setMsapp(double msapp) {
         this.msapp = msapp;
+    }
+
+    public double getCpuPower() {
+        return cpuPower;
+    }
+
+    public void setCpuPower(double cpuPower) {
+        this.cpuPower = cpuPower;
+    }
+
+    public double getRadioPower() {
+        return radioPower;
+    }
+
+    public void setRadioPower(double radioPower) {
+        this.radioPower = radioPower;
+    }
+
+    public double getWakePower() {
+        return wakePower;
+    }
+
+    public void setWakePower(double wakePower) {
+        this.wakePower = wakePower;
+    }
+
+    public double getWifiPower() {
+        return wifiPower;
+    }
+
+    public void setWifiPower(double wifiPower) {
+        this.wifiPower = wifiPower;
+    }
+
+    public double getGpsPower() {
+        return gpsPower;
+    }
+
+    public void setGpsPower(double gpsPower) {
+        this.gpsPower = gpsPower;
+    }
+
+    public double getSensorPower() {
+        return sensorPower;
+    }
+
+    public void setSensorPower(double sensorPower) {
+        this.sensorPower = sensorPower;
+    }
+
+    public double getCamerPower() {
+        return camerPower;
+    }
+
+    public void setCamerPower(double camerPower) {
+        this.camerPower = camerPower;
     }
 }
 

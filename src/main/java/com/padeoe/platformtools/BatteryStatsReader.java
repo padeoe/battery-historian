@@ -1,5 +1,8 @@
 package com.padeoe.platformtools;
 
+import com.padeoe.batterhistorian.pojo.App;
+import com.padeoe.batterhistorian.pojo.Device;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -14,6 +17,14 @@ import java.util.stream.Stream;
  * Created by padeoe on 2017/5/2.
  */
 public class BatteryStatsReader {
+    String deviceSerialNumber;
+    String  packageName;
+    private String uid;
+
+    public BatteryStatsReader(String deviceSerialNumber, String packageName) {
+        this.deviceSerialNumber = deviceSerialNumber;
+        this.packageName = packageName;
+    }
 
     public BatteryStats read() throws IOException, StatsInfoNotFoundException, EnvironmentNotConfiguredException, InterruptedException {
         return parseBaterryStats(getBaterryStatsText().stdString);
@@ -30,10 +41,18 @@ public class BatteryStatsReader {
     }
 
     private BatteryStats parseBaterryStats(String baterryStatsText) throws StatsInfoNotFoundException {
-        String topUid = parseTopUid(baterryStatsText);
+        String topUid = getUid(baterryStatsText);
         return new BatteryStats(parseMmpp(baterryStatsText, topUid), parsePoweruse(baterryStatsText, topUid));
     }
 
+    private String getUid(String baterryStatsText) throws StatsInfoNotFoundException {
+        Pattern pattern=Pattern.compile("(\\w*):\""+packageName+"\"");
+        Matcher matcher=pattern.matcher(baterryStatsText);
+        if(matcher.find()){
+            return matcher.group(1);
+        }
+        throw new StatsInfoNotFoundException("未找到应用uid");
+    }
     private String parseTopUid(String baterryStatsText) throws StatsInfoNotFoundException {
         String topUid;
         final String TOPUIDKW = "top=";
@@ -52,7 +71,7 @@ public class BatteryStatsReader {
     }
 
     private ADBTool.ProcessOutput getBaterryStatsText() throws EnvironmentNotConfiguredException, InterruptedException {
-        String[] commands = new String[]{"adb", "shell", "dumpsys", "batterystats"};
+        String[] commands = new String[]{"adb", "-s",deviceSerialNumber, "shell","dumpsys", "batterystats"};
         return ADBTool.execute(commands);
     }
 
@@ -110,7 +129,7 @@ public class BatteryStatsReader {
         if (mmpp != -1) {
             return mmpp;
         } else {
-            throw new StatsInfoNotFoundException("mmpp not found");
+            return 0;
         }
     }
 }

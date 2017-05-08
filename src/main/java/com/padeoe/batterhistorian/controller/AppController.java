@@ -2,6 +2,7 @@ package com.padeoe.batterhistorian.controller;
 
 import com.padeoe.batterhistorian.dao.AppRepository;
 import com.padeoe.batterhistorian.pojo.App;
+import com.padeoe.batterhistorian.service.AppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping(path="/app")
 public class AppController {
+    @Autowired
+    private AppService appService;
 
     @Autowired
     private AppRepository appRepository;
@@ -45,7 +48,7 @@ public class AppController {
     }
     @GetMapping(path="/search")
     public @ResponseBody Iterable<App> searchApp(@RequestParam String kw){
-        return appRepository.searchApp(kw);
+        return appService.search(kw);
     }
 
     @GetMapping(path="/test")

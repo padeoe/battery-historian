@@ -31,7 +31,8 @@ public class BatteryStats {
     }
 
     public double getComponetPower(MobileComponet mobileComponet) {
-        return this.getPowerDetail().get(mobileComponet);
+        Double power = this.getPowerDetail().get(mobileComponet);
+        return power==null?0:power;
     }
 
     /**
