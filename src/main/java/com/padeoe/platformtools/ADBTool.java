@@ -100,6 +100,7 @@ public class ADBTool {
      * @throws InstallFailureException
      */
     public static void installApk(String serialNumber, File apkFile) throws InstallFailureException {
+        System.out.println("准备安装apk");
         String []commands=new String[]{"adb","-s",serialNumber,"install","-r",apkFile.getPath()};
         Runtime runtime = Runtime.getRuntime();
         Process process;
