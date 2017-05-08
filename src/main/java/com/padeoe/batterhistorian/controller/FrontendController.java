@@ -22,9 +22,9 @@ public class FrontendController {
      *   根据appid返回一个app在各个平台下所有模块的耗电量
      返回值[i][j],[j0]是平台，后续的[j1][j2]...按照cpu,radio,wake,wifi,gps,sensor,camera顺序
      */
-    @GetMapping(path="/areachart")
+    @GetMapping(path="/AppDetailForm")
     public @ResponseBody
-    String areachart(@RequestParam String appId){
+    String AppDetailForm(@RequestParam String appId){
         String data = "";
 
         String[][] tempdata= {{"苹果","23","31","32","35","31","34","32"},{"三星","21","32","36","43","32","31","32"},{"华为","22","13","23","33","43","33","23"},{"小米","25","11","27","31","23","23","26"}};
@@ -168,7 +168,7 @@ public class FrontendController {
 
         String tempdata[] = {"小米","三星","华为"};
         //tagdata = GetAppPlatform(appId);
-        data="选择TAG\n" +
+        data="" +
                 "                                            <select id=\"choosePlatform_1\">\n" +
                 "                                                <option value=\"1\" selected=\"selected\">选择平台</option>\n";
         int i  = 2;
