@@ -33,5 +33,6 @@ public interface RecordRepository extends CrudRepository<Record,Long>{
     @Query("select record from Record record inner join record.app as A inner join record.device as B where A.packageName=?1 and B.serialNumber=?2 order by A.versionCode")
     List<Record>getAppPowerVersionLine(String packageName,String serialNumber);
 
+    List<Record> findAllByApp_Id(String appId);
 
 }

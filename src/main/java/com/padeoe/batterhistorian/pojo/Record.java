@@ -154,5 +154,12 @@ public class Record implements Serializable{
     public void setCamerPower(double camerPower) {
         this.camerPower = camerPower;
     }
+
+    public double allPower(){
+        return getCpuPower()+getCamerPower()+getGpsPower()+getRadioPower()+
+                getSensorPower()+getWakePower()+getWifiPower();
+    }
+
+
 }
 

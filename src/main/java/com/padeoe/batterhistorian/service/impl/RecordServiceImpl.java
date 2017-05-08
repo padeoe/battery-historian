@@ -68,4 +68,9 @@ public class RecordServiceImpl implements RecordService {
     public Iterable<Record> getAppPowerVersionLine(String packageName,String deviceId) {
         return recordRepository.getAppPowerVersionLine(packageName,deviceId);
     }
+
+    @Override
+    public Iterable<Record> getPowerByAppId(String appId) {
+        return recordRepository.findAllByApp_Id(appId);
+    }
 }

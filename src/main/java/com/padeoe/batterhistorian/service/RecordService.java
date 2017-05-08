@@ -19,5 +19,6 @@ public interface RecordService{
     void testApp(List<Device>devices,App app);
     Iterable<Record> getAllRecord();
     Iterable<Record> getAppPowerVersionLine(String packageName,String deviceId);
+    Iterable<Record> getPowerByAppId(String appId);
 
 }

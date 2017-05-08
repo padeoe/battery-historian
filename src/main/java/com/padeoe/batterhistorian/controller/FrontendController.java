@@ -3,11 +3,20 @@ package com.padeoe.batterhistorian.controller;
 import com.padeoe.batterhistorian.dao.DeviceRepository;
 import com.padeoe.batterhistorian.pojo.App;
 import com.padeoe.batterhistorian.pojo.Device;
+import com.padeoe.batterhistorian.pojo.Record;
+import com.padeoe.batterhistorian.pojo.Tag;
+import com.padeoe.batterhistorian.service.AppService;
+import com.padeoe.batterhistorian.service.DeviceService;
+import com.padeoe.batterhistorian.service.RecordService;
+import com.padeoe.platformtools.EnvironmentNotConfiguredException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by zafara on 2017/5/5
@@ -15,6 +24,12 @@ import java.io.File;
 @Controller
 //@RequestMapping(path="/")
 public class FrontendController {
+    @Autowired
+    private RecordService recordService;
+    @Autowired
+    private AppService appService;
+    @Autowired
+    private DeviceService deviceService;
 
     /**
      * 调用AppDetailForm(String appId)
@@ -140,7 +155,7 @@ public class FrontendController {
         data = data+"]";
 
 
-       return data;
+        return data;
     }
 
     /**
@@ -171,19 +186,39 @@ public class FrontendController {
     public @ResponseBody
     String choosePlatform1(@RequestParam String appId){
         String data = "";
-
-        String tempdata[] = {"小米","三星","华为"};
-        //tagdata = GetAppPlatform(appId);
+        StringBuffer stringBuffer=new StringBuffer();
+        stringBuffer.append("                                            <select id=\"choosePlatform_1\">\n");
+        stringBuffer.append("                                                <option value=\"1\" selected=\"selected\">选择平台</option>\n");
+        try {
+            List<Device> devices = deviceService.detectAllDeviceConnected();
+            int i  = 2;
+            for(Device device:devices){
+                stringBuffer.append("<option value=\""+ i +"\" >" + device.getBrand()+" "+device.getModel() + "</option>\n");
+                i++;
+            }
+            stringBuffer.append("</select>");
+            return stringBuffer.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return e.getMessage();
+        } catch (EnvironmentNotConfiguredException e) {
+            e.printStackTrace();
+            return e.getMessage();
+        }
+/*        String tempdata[] = {"小米","三星","华为"};
+        //tagdata =
+        // (appId);
         data="" +
                 "                                            <select id=\"choosePlatform_1\">\n" +
                 "                                                <option value=\"1\" selected=\"selected\">选择平台</option>\n";
         int i  = 2;
+
         for(String temp:tempdata){
             data = data + "<option value=\""+ i +"\" >" + temp + "</option>\n";
             i++;
         }
         data = data+"</select>";
-       return data;
+       return data;*/
     }
 
     /**
@@ -194,6 +229,7 @@ public class FrontendController {
     public @ResponseBody
     String getAppTag(@RequestParam String appId){
 //多应用对比图表获得tag
+        List<Tag> tags = appService.GetAppTags(appId);
         String data = "";
         String tempdata[] = {"社交软件","即时通讯软件","直播软件"};
         //tempdata = GetAppTag(appId);
@@ -201,12 +237,18 @@ public class FrontendController {
                 "                                            <select id=\"tag_choose\">\n" +
                 "                                                <option value=\"1\" selected=\"selected\">选择TAG</option>\n";
         int i  = 2;
-        for(String temp:tempdata){
-            data = data + "<option value=\""+ i +"\" >" + temp + "</option>\n";
+        StringBuffer stringBuffer=new StringBuffer();
+        for(Tag tag:tags){
+            stringBuffer.append("<option value=\""+ i +"\" >" + tag + "</option>\n");
             i++;
         }
+        stringBuffer.append("</select>");
+/*        for(String temp:tempdata){
+            data = data + "<option value=\""+ i +"\" >" + temp + "</option>\n";
+            i++;
+        }*/
         data = data+"</select>";
-        return data;
+        return stringBuffer.toString();
     }
 
     /**
@@ -217,19 +259,29 @@ public class FrontendController {
     @GetMapping(path="/getMSPP")
     public @ResponseBody
     String getMSPP(@RequestParam String appId){
+        Iterable<Record> powerByAppId = recordService.getPowerByAppId(appId);
         String datatemp[][]={{"华为","1.3"},{"小米","1.2"}};
         // datatemp=GetMSPP(appId);
 
         String data = "[";
-        for(int i = 0;i<datatemp.length;i++) {
+        StringBuffer stringBuffer=new StringBuffer();
+        Iterator<Record> recordIterator = powerByAppId.iterator();
+        stringBuffer.append(recordIterator.next());
+        while(recordIterator.hasNext()){
+            Record record=recordIterator.next();
+            stringBuffer.append(",");
+            stringBuffer.append("{\"x\":\"" + record.getDevice().getBrand()+" "+record.getDevice().getModel() + "\",\"y\":" + record.getMsapp() + "}");
+        }
+/*        for(int i = 0;i<datatemp.length;i++) {
             data = data + "{\"x\":\"" + datatemp[i][0] + "\",\"y\":" + datatemp[i][1] + "}";
             if(i+1<datatemp.length){
                 data = data + ",";
             }
-        }
+        }*/
+        stringBuffer.append("]");
         data = data+"]";
 
-       return data;
+        return stringBuffer.toString();
     }
 
     /**
@@ -243,8 +295,9 @@ public class FrontendController {
     String getPlatformData(){
         String data = "";
 
-        String[][] tempdata= {{"苹果5S","32M内存"},{"小米","62M内存"},{"大米","62M内存"}};
-        // tempdata =  GetAllPlatformDetail();
+        String[][] tempdata= {{"苹果5S","32M内存"},{"小米","62M内存"}};
+        Iterable<Device> allDevices = deviceService.getAllDevices();
+
 
         data = "   <table width=\"100%\" class=\"table\" id=\"choosePlatformForm\">\n" +
                 "                                    <thead>\n" +
@@ -260,7 +313,7 @@ public class FrontendController {
         for(String[] temp:tempdata){
             data = data+
                     "                                        <tr>\n" +
-                    "                                               <td align=\"center\"><label><input name=\"Platform\" type=\"checkbox\" id=\""+i+"\"  checked=\"checked\" /></label> </td>\n" ;
+                    "                                               <td align=\"center\"><label><input name=\"Platform\" type=\"checkbox\" value=\"1\"  checked=\"checked\" /></label> </td>\n" ;
             for(String temp2: temp){
                 data = data +                    "<td>"+temp2+"</td>\n";
             }
@@ -283,8 +336,9 @@ public class FrontendController {
     public @ResponseBody
     String multipleVersionchart(@RequestParam String appId,@RequestParam String platform){
         String data = "";
+        Iterable<Record> appPowerVersionLine = recordService.getAppPowerVersionLine(appId, platform);
 
-        String datatemp[][]={{"201023","43","14","23","22","14","25","23","14"},{"201026","48","12","21","19","12","23","21","17"}};//test
+/*        String datatemp[][]={{"201023","43","14","23","22","14","25","23","14"},{"201026","48","12","21","19","12","23","21","17"}};//test
         // datatemp = AppVersionDetail(appId,platform);
         System.out.print("test");
         if(platform.equals("三星")){
@@ -292,7 +346,7 @@ public class FrontendController {
         }
         else{
             datatemp[0][1] = "42";
-        }
+        }*/
 
         data = "                                    <table width=\"100%\" class=\"table\" id=\"multipleVersionchart_table\">\n" +
                 "                                        <thead>\n" +
@@ -309,7 +363,7 @@ public class FrontendController {
                 "                                        </tr>\n" +
                 "                                        </thead>\n" +
                 "                                        <tbody>\n" ;
-        int i = 1;
+/*        int i = 1;
         for(String[] temp:datatemp){
             data = data+
                     "                                        <tr>\n" ;
@@ -318,6 +372,22 @@ public class FrontendController {
             }
             data = data+ "  </tr>\n" ;
             i++;
+        }*/
+
+        for(Record record:appPowerVersionLine){
+            data = data+
+                    "                                        <tr>\n" ;
+
+            data = data +                    "<td>"+record.getApp().getVersionName()+"</td>\n";
+            data = data +                    "<td>"+record.allPower()+"</td>\n";
+            data = data +                    "<td>"+record.getCpuPower()+"</td>\n";
+            data = data +                    "<td>"+record.getRadioPower()+"</td>\n";
+            data = data +                    "<td>"+record.getWakePower()+"</td>\n";
+            data = data +                    "<td>"+record.getWifiPower()+"</td>\n";
+            data = data +                    "<td>"+record.getGpsPower()+"</td>\n";
+            data = data +                    "<td>"+record.getSensorPower()+"</td>\n";
+            data = data +                    "<td>"+record.getCamerPower()+"</td>\n";
+            data = data+ "  </tr>\n" ;
         }
         data = data+
                 "                                        </tbody>\n" +
@@ -334,7 +404,8 @@ public class FrontendController {
     String searchapp(@RequestParam String detail) {
         String data = "";
         System.out.println(detail);
-        String tempdata[][] = {{"32123","拍拍神器","202312314","一款用于自拍的APP"},{"32125","嘟嘟噜","142312314","一款用于看番的APP"}};
+        List<App> apps = appService.search(detail);
+        // String tempdata[][] = {{"32123","拍拍神器","202312314","一款用于自拍的APP"},{"32125","嘟嘟噜","142312314","一款用于看番的APP"}};
         //tempdata = SearchApp(detail);
 
         data =data+"              <table width=\"100%\" class=\"table\" id=\"searchTable\">\n" +
@@ -350,7 +421,7 @@ public class FrontendController {
                 "                                    <tbody>\n";
 
         int i = 1;
-        for(String[] temp:tempdata){
+/*       for(String[] temp:tempdata){
             data = data+
                     "                                        <tr>\n" +
                     "                                        <td align=\"center\"><label><input name=\"ChooseApp\" type=\"radio\" value=\""+i+"\" /></label> </td>\n";
@@ -360,7 +431,21 @@ public class FrontendController {
             }
             data = data+ "  </tr>\n" ;
             i++;
+        }*/
+
+        for(App app:apps){
+            data = data+
+                    "                                        <tr>\n" +
+                    "                                        <td align=\"center\"><label><input name=\"ChooseApp\" type=\"radio\" value=\""+i+"\" /></label> </td>\n";
+
+
+            data = data +                    "<td>"+app.getId()+"</td>\n";
+            data = data +                    "<td>"+app.getName()+"</td>\n";
+            data = data +                    "<td>"+app.getVersionName()+"</td>\n";
+            data = data+ "  </tr>\n" ;
+            i++;
         }
+
         data = data+
                 "                                    </tbody>\n" +
                 "                                </table>\n";
