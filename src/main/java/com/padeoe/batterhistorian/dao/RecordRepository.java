@@ -30,9 +30,8 @@ public interface RecordRepository extends CrudRepository<Record,Long>{
      * @param packageName app的包名
      * @return 测试记录
      */
-    //TODO the HQL is for test
-    @Query("select distinct record.device from Record record where record.app=?1")
-    List<Record>getAppPowerVersionLine(String packageName);
+    @Query("select record from Record record inner join record.app as A inner join record.device as B where A.packageName=?1 and B.serialNumber=?2 order by A.versionCode")
+    List<Record>getAppPowerVersionLine(String packageName,String serialNumber);
 
 
 }
