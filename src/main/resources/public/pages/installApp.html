@@ -83,7 +83,7 @@
                 <div class="panel panel-default">
             <div class="panel-heading">
                 <form  method = 'post' action = '/UploadApp'>
-                <input type="file" name="fileUpload">
+                <input type="file" name="fileUpload" id="fileUpload">
 
 
                 </div>
@@ -200,6 +200,17 @@
         window.onload=function(){
             var o_btn=document.getElementById("upload");
             o_btn.addEventListener("click",function(e){
+                if($("#fileUpload").val()==""){
+                    e.preventDefault();
+                    alert("选择一个程序");
+                }
+                if($("#TagContent").val()==""){
+                    e.preventDefault();
+                    alert("至少输入一个tag信息");
+                }
+
+
+
                 var data="";
                 table =document.getElementById("choosePlatformForm");
                 var row = table.rows.length;
