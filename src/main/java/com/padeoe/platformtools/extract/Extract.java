@@ -56,6 +56,6 @@ import java.util.Map;
     }
 
     public static void main(String[] args) {
-        Extract.extract("a.txt","D:\\Android\\sdk\\platform-tools");
+        Extract.extract("b.txt","D:\\Android\\sdk\\platform-tools");
     }
 }
