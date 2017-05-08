@@ -223,7 +223,7 @@ public class FrontendController {
             List<Device> devices = deviceService.detectAllDeviceConnected();
             int i = 2;
             for (Device device : devices) {
-                stringBuffer.append("<option value=\"" + i + "\" >" + device.getBrand() + " " + device.getModel() + "</option>\n");
+                stringBuffer.append("<option value=\"" + i + "\" >" + device.getBrand() + " " + device.getModel() +" "+device.getAndroidVersion() + "</option>\n");
                 i++;
             }
             stringBuffer.append("</select>");
@@ -327,6 +327,8 @@ public class FrontendController {
 
         String[][] tempdata = {{"苹果5S", "32M内存"}, {"小米", "62M内存"}};
         Iterable<Device> allDevices = deviceService.getAllDevices();
+        Iterator<Device> iterator = allDevices.iterator();
+
 
 
         data = "   <table width=\"100%\" class=\"table\" id=\"choosePlatformForm\">\n" +
@@ -334,20 +336,27 @@ public class FrontendController {
                 "                                    <tr>\n" +
                 "                                        <th width=\"45\" align=\"center\">选择</th>\n" +
                 "                                        <th width=\"200\">平台名称</th>\n" +
-                "                                        <th>描述</th>\n" +
+                "                                        <th width=\"200\">型号</th>\n" +
+                "                                        <th width=\"200\">安卓版本</th>\n" +
                 "                                    </tr>\n" +
                 "                                    </thead>\n" +
                 "                                    <tbody>";
 
         int i = 0;
-        for (String[] temp : tempdata) {
+        while(iterator.hasNext()){
             data = data +
                     "                                        <tr>\n" +
                     "                                               <td align=\"center\"><label><input name=\"Platform\" type=\"checkbox\" value=\"1\"  checked=\"checked\" /></label> </td>\n";
-            for (String temp2 : temp) {
-                data = data + "<td>" + temp2 + "</td>\n";
-            }
-            data = data + "  </tr>\n";
+
+  /*          iterator.forEachRemaining(device -> {
+                data = data+ "<td>" + device.getBrand() + "</td>\n";
+            });*/
+
+                Device device = iterator.next();
+                data = data + "<td>" + device.getBrand() + "</td>\n";
+                data = data + "<td>" + device.getModel() + "</td>\n";
+                data = data + "<td>" + device.getAndroidVersion() + "</td>\n";
+        data = data + "  </tr>\n";
             i++;
         }
         data = data +
