@@ -79,9 +79,25 @@ public class FrontendController {
     public @ResponseBody
     String AppDetailForm(@RequestParam String appId) {
         String data = "";
+        String[][] tempdata = {{"苹果", "23", "31", "32", "35", "31", "34", "32"}};
 
-        String[][] tempdata = {{"苹果", "23", "31", "32", "35", "31", "34", "32"}, {"三星", "21", "32", "36", "43", "32", "31", "32"}, {"华为", "22", "13", "23", "33", "43", "33", "23"}, {"小米", "25", "11", "27", "31", "23", "23", "26"}};
-        // tempdata =  AppDetailForm (appId);
+        int j = 0;
+        Iterator<Record> iterator = recordService.getPowerByAppId(appId).iterator();
+        while(iterator.hasNext()){
+            Record record = iterator.next();
+            tempdata[j][0] = record.getDevice().getBrand();
+            tempdata[j][1] = String.valueOf( record.getCpuPower());
+            tempdata[j][2] = String.valueOf( record.getRadioPower());
+            tempdata[j][3] = String.valueOf( record.getWakePower());
+            tempdata[j][4] = String.valueOf( record.getWifiPower());
+            tempdata[j][5] = String.valueOf( record.getGpsPower());
+            tempdata[j][6] = String.valueOf( record.getSensorPower());
+            tempdata[j][7] = String.valueOf( record.getCamerPower());
+            j++;
+        }
+
+
+
 
         data = " <table width=\"100%\" class=\"table table-striped table-bordered table-hover\" id=\"dataTables-example\">\n" +
                 "                                        <thead>\n" +
@@ -125,13 +141,24 @@ public class FrontendController {
     @GetMapping(path = "/areachart")
     public @ResponseBody
     String areachart(@RequestParam String appId, @RequestParam String platform) {
-        String tempdata[][] = {{"201023", "43", "14", "23", "22", "14", "25", "23", "14"}, {"201026", "48", "12", "21", "19", "12", "23", "21", "17"}};//test
-        // tempdata = AppVersionDetail(appId,platform);
-        if (platform.equals("三星")) {
-            tempdata[0][1] = "52";
-        } else {
-            tempdata[0][1] = "42";
+        String tempdata[][] = {{"0", "0", "0", "0", "0", "0", "0", "0", "0"}};//test
+
+        Iterator<Record> iterator = recordService.getAppPowerVersionLine(appId, platform).iterator();
+
+        int j = 0;
+        while(iterator.hasNext()){
+            Record record = iterator.next();
+            tempdata[j][0] = record.getApp().getVersionName();
+            tempdata[j][1] = String.valueOf( record.getCpuPower());
+            tempdata[j][2] = String.valueOf( record.getRadioPower());
+            tempdata[j][3] = String.valueOf( record.getWakePower());
+            tempdata[j][4] = String.valueOf( record.getWifiPower());
+            tempdata[j][5] = String.valueOf( record.getGpsPower());
+            tempdata[j][6] = String.valueOf( record.getSensorPower());
+            tempdata[j][7] = String.valueOf( record.getCamerPower());
+            j++;
         }
+
 
         String data = "[";
         for (int i = 0; i < tempdata.length; i++) {
@@ -160,15 +187,39 @@ public class FrontendController {
         // tempdata = AppDetailChart(appId, true,detail)：
 
         if (type.equals("platform")) {
+            Iterator<Record> iterator = recordService.getAppPowerVersionLine(appId, type).iterator();
 
-            switch (detail) {//test
-                case ("1号"):
-                    tempdata[0][1] = "2400";
-                    break;
-                case ("2号"):
-                    tempdata[0][1] = "2200";
-                    break;
-            }
+            Record record_new = iterator.next();
+            Record record_old = iterator.next();
+
+            tempdata[0][0] = "cpu";
+            tempdata[0][1] = String.valueOf(record_new.getCpuPower());
+            tempdata[0][2] = String.valueOf(record_old.getCpuPower());
+
+            tempdata[0][0] = "radio";
+            tempdata[0][1] = String.valueOf(record_new.getRadioPower());
+            tempdata[0][2] = String.valueOf(record_old.getRadioPower());
+
+            tempdata[0][0] = "wake";
+            tempdata[0][1] = String.valueOf(record_new.getWakePower());
+            tempdata[0][2] = String.valueOf(record_old.getWakePower());
+
+            tempdata[0][0] = "wifi";
+            tempdata[0][1] = String.valueOf(record_new.getWifiPower());
+            tempdata[0][2] = String.valueOf(record_old.getWifiPower());
+
+            tempdata[0][0] = "gps";
+            tempdata[0][1] = String.valueOf(record_new.getGpsPower());
+            tempdata[0][2] = String.valueOf(record_old.getGpsPower());
+
+            tempdata[0][0] = "sensor";
+            tempdata[0][1] = String.valueOf(record_new.getSensorPower());
+            tempdata[0][2] = String.valueOf(record_old.getSensorPower());
+
+            tempdata[0][0] = "camera";
+            tempdata[0][1] = String.valueOf(record_new.getCamerPower());
+            tempdata[0][2] = String.valueOf(record_old.getCamerPower());
+
         } else {
             // tempdata = AppDetailChart(appId, false,detail)：
 
@@ -197,19 +248,26 @@ public class FrontendController {
     public @ResponseBody
     String choosePlatform2(@RequestParam String appId) {
         String data = "";
-
-        String tempdata[] = {"小米", "三星", "华为"};
-        //tagdata = GetAppPlatform(appId);
-        data = "" +
-                "                                            <select id=\"choosePlatform_2\">\n" +
-                "                                                <option value=\"1\" selected=\"selected\">选择平台</option>\n";
-        int i = 2;
-        for (String temp : tempdata) {
-            data = data + "<option value=\"" + i + "\" >" + temp + "</option>\n";
-            i++;
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append("                                            <select id=\"choosePlatform_2\">\n");
+        stringBuffer.append("                                                <option value=\"1\" selected=\"selected\">选择平台</option>\n");
+        try {
+            List<Device> devices = deviceService.detectAllDeviceConnected();
+            int i = 2;
+            for (Device device : devices) {
+                stringBuffer.append("<option value=\"" + i + "\" >" + device.getBrand() + " " + device.getModel() +" "+device.getAndroidVersion() + "</option>\n");
+                i++;
+            }
+            stringBuffer.append("</select>");
+            return stringBuffer.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return e.getMessage();
+        } catch (EnvironmentNotConfiguredException e) {
+            e.printStackTrace();
+            return e.getMessage();
         }
-        data = data + "</select>";
-        return data;
+/*        String
     }
 
     @GetMapping(path = "/choosePlatform1")
@@ -352,11 +410,12 @@ public class FrontendController {
                 data = data+ "<td>" + device.getBrand() + "</td>\n";
             });*/
 
-                Device device = iterator.next();
-                data = data + "<td>" + device.getBrand() + "</td>\n";
-                data = data + "<td>" + device.getModel() + "</td>\n";
-                data = data + "<td>" + device.getAndroidVersion() + "</td>\n";
-        data = data + "  </tr>\n";
+            Device device = iterator.next();
+            data = data + "<td>" + device.getSerialNumber()+ "</td>\n";
+            data = data + "<td>" + device.getBrand() + "</td>\n";
+            data = data + "<td>" + device.getModel() + "</td>\n";
+            data = data + "<td>" + device.getAndroidVersion() + "</td>\n";
+            data = data + "  </tr>\n";
             i++;
         }
         data = data +
