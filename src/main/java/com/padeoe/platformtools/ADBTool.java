@@ -50,7 +50,7 @@ public class ADBTool {
 
 
     private static ADBDevice parseLineGetDevice(String input) {
-        Pattern pattern = Pattern.compile("(\\w+)\\s+(device|offline|no device)(\\sproduct:(.*)\\smodel:(.*)\\sdevice:(.*))*");
+        Pattern pattern = Pattern.compile("(\\S+)\\s+(device|offline|no device)(\\sproduct:(.*)\\smodel:(.*)\\sdevice:(.*))*");
         Matcher matcher = pattern.matcher(input);
         if (matcher.find()) {
             ADBDevice adbDevice = new ADBDevice();
@@ -208,5 +208,10 @@ public class ADBTool {
             this.stdString = stdString;
             this.errorString = errorString;
         }
+    }
+
+    public static ProcessOutput launchActivity(String deviceSerialNumber,String packageName,String acitivityName) throws EnvironmentNotConfiguredException, InterruptedException {
+        String []commands=new String[]{"adb","-s",deviceSerialNumber,"shell","am","start","-n",packageName+"/"+acitivityName};
+        return execute(commands);
     }
 }

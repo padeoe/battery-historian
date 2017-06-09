@@ -23,4 +23,5 @@ public interface AppService {
      */
     List<Tag> GetAppTags(String appId);
 
+    void save(App app);
 }

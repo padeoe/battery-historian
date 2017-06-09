@@ -34,5 +34,8 @@ public class AppServiceImpl implements AppService{
         return appRepository.getAppById(Integer.parseInt(appId)).stream().flatMap(app->app.getTags().stream()).collect(Collectors.toList());
     }
 
-
+    @Override
+    public void save(App app){
+        appRepository.save(app);
+    }
 }

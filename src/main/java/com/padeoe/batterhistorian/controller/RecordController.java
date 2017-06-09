@@ -8,6 +8,7 @@ import com.padeoe.batterhistorian.pojo.Record;
 import com.padeoe.batterhistorian.service.RecordService;
 import com.padeoe.platformtools.ADBTool;
 import com.padeoe.platformtools.EnvironmentNotConfiguredException;
+import com.padeoe.platformtools.StatsInfoNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,28 +37,44 @@ public class RecordController {
     @GetMapping(path = "/testqq")
     public @ResponseBody
     void testQQ() {
-
         try {
-            recordService.testApp(ADBTool.getDevices().stream().map(adbDevice -> {
-                try {
-                    return Device.fromADBDevice(adbDevice);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (EnvironmentNotConfiguredException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }).collect(Collectors.toList()), new App("com.tencent.mm",21,"QQ","2.3","this is qq"));
+            ADBTool.getDevices().stream().map(adbDevice ->
+                    {
+                        try {
+                            return Device.fromADBDevice(adbDevice);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (EnvironmentNotConfiguredException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+            )
+                    .filter(device -> device != null)
+                    .forEach(device -> {
+    /*                    try {
+                            recordService.testApp(device, new App("com.tencent.mm", 21, "QQ", "2.3", "this is qq"));
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (StatsInfoNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (EnvironmentNotConfiguredException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }*/
+                    });
         } catch (EnvironmentNotConfiguredException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
     @GetMapping(path = "/qqallversion")
     public @ResponseBody
-    Iterable<Record> getPowerVersionLine(@RequestParam String packageName,@RequestParam String deviceId) {
-        return recordService.getAppPowerVersionLine(packageName,deviceId);
+    Iterable<Record> getPowerVersionLine(@RequestParam String packageName, @RequestParam String deviceId) {
+        return recordService.getAppPowerVersionLine(packageName, deviceId);
     }
 
 }

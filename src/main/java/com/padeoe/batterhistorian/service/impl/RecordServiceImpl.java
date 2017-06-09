@@ -6,10 +6,7 @@ import com.padeoe.batterhistorian.pojo.App;
 import com.padeoe.batterhistorian.pojo.Device;
 import com.padeoe.batterhistorian.pojo.Record;
 import com.padeoe.batterhistorian.service.RecordService;
-import com.padeoe.platformtools.BatteryStats;
-import com.padeoe.platformtools.BatteryStatsReader;
-import com.padeoe.platformtools.EnvironmentNotConfiguredException;
-import com.padeoe.platformtools.StatsInfoNotFoundException;
+import com.padeoe.platformtools.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,32 +27,30 @@ public class RecordServiceImpl implements RecordService {
     }
 
 
-
     @Override
-    public void testApp(List<Device> devices, App app) {
-        devices.forEach(device -> {
-            try {
-                BatteryStats batteryStats = new BatteryStatsReader(device.getSerialNumber(), app.getPackageName()).read();
-                recordRepository.save(new Record(new Date(), app, device, batteryStats.getMmpp(),
-                        batteryStats.getComponetPower(BatteryStats.MobileComponet.CPU),
-                        batteryStats.getComponetPower(BatteryStats.MobileComponet.RADIO),
-                        batteryStats.getComponetPower(BatteryStats.MobileComponet.WAKE),
-                        batteryStats.getComponetPower(BatteryStats.MobileComponet.WIFI),
-                        batteryStats.getComponetPower(BatteryStats.MobileComponet.GPS),
-                        batteryStats.getComponetPower(BatteryStats.MobileComponet.SENSOR),
-                        batteryStats.getComponetPower(BatteryStats.MobileComponet.CAMERA)
-                ));
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (StatsInfoNotFoundException e) {
-                e.printStackTrace();
-            } catch (EnvironmentNotConfiguredException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
-
+    public void testApp(Device device, App app, ApkInfo apkInfo) throws InterruptedException, StatsInfoNotFoundException, EnvironmentNotConfiguredException, IOException {
+        System.out.println("开始测试app");
+        System.out.println(ADBTool.launchActivity(device.getSerialNumber(), app.getPackageName(), apkInfo.getLaunchableActivity()));
+        //Thread.sleep(20000);
+      //  BatteryStats batteryStats = new BatteryStatsReader(device.getSerialNumber(), app.getPackageName()).read();
+/*        recordRepository.save(new Record(new Date(), app, device, batteryStats.getMmpp(),
+                batteryStats.getComponetPower(BatteryStats.MobileComponet.CPU),
+                batteryStats.getComponetPower(BatteryStats.MobileComponet.RADIO),
+                batteryStats.getComponetPower(BatteryStats.MobileComponet.WAKE),
+                batteryStats.getComponetPower(BatteryStats.MobileComponet.WIFI),
+                batteryStats.getComponetPower(BatteryStats.MobileComponet.GPS),
+                batteryStats.getComponetPower(BatteryStats.MobileComponet.SENSOR),
+                batteryStats.getComponetPower(BatteryStats.MobileComponet.CAMERA)
+        ));*/
+        recordRepository.save(new Record(new Date(), app, device, 2.08,
+                0.00137,
+                0.00123,
+                0,
+                0,
+                0,
+                0,
+                0)
+        );
 
     }
 
@@ -65,8 +60,8 @@ public class RecordServiceImpl implements RecordService {
     }
 
     @Override
-    public Iterable<Record> getAppPowerVersionLine(String packageName,String deviceId) {
-        return recordRepository.getAppPowerVersionLine(packageName,deviceId);
+    public Iterable<Record> getAppPowerVersionLine(String packageName, String deviceId) {
+        return recordRepository.getAppPowerVersionLine(packageName, deviceId);
     }
 
     @Override

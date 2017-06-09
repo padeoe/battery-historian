@@ -30,15 +30,6 @@ public class BatteryStatsReader {
         return parseBaterryStats(getBaterryStatsText().stdString);
     }
 
-    public BatteryStats getBaterryStats() throws EnvironmentNotConfiguredException, InterruptedException, StatsInfoNotFoundException {
-        ADBTool.ProcessOutput output = getBaterryStatsText();
-        String baterryStatsText = output.stdString;
-        if (baterryStatsText != null) {
-            return parseBaterryStats(baterryStatsText);
-        } else {
-            throw new EnvironmentNotConfiguredException(output.errorString);
-        }
-    }
 
     private BatteryStats parseBaterryStats(String baterryStatsText) throws StatsInfoNotFoundException {
         String topUid = getUid(baterryStatsText);
@@ -46,7 +37,7 @@ public class BatteryStatsReader {
     }
 
     private String getUid(String baterryStatsText) throws StatsInfoNotFoundException {
-        Pattern pattern=Pattern.compile("(\\w*):\""+packageName+"\"");
+        Pattern pattern=Pattern.compile("top=(\\w*):\""+packageName+"\"");
         Matcher matcher=pattern.matcher(baterryStatsText);
         if(matcher.find()){
             return matcher.group(1);
@@ -75,7 +66,7 @@ public class BatteryStatsReader {
         return ADBTool.execute(commands);
     }
 
-    public Map<BatteryStats.MobileComponet, Double> parsePoweruse(String input, String uid) throws StatsInfoNotFoundException {
+    private Map<BatteryStats.MobileComponet, Double> parsePoweruse(String input, String uid) throws StatsInfoNotFoundException {
         Map<BatteryStats.MobileComponet, Double> mobileComponetDoubleMap = new HashMap<>();
         Stream<String> stringStream = Arrays.asList(input.split("\r\r\n\r\r\n")).stream().map(block -> block.trim());
         List<String> collect = stringStream.filter(block -> block.startsWith("Estimated power use (mAh):")).collect(Collectors.toList());
@@ -101,7 +92,7 @@ public class BatteryStatsReader {
         }
     }
 
-    public double parseMmpp(String input, String uid) throws StatsInfoNotFoundException {
+    private double parseMmpp(String input, String uid) throws StatsInfoNotFoundException {
         double mmpp = -1;
         Stream<String> stringStream = Arrays.asList(input.split("\r\r\n\r\r\n")).stream().map(block -> block.trim());
         List<String> collect = stringStream.filter(block -> block.startsWith("Per-app mobile ms per packet:")).collect(Collectors.toList());

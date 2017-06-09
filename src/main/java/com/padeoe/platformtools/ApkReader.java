@@ -25,4 +25,8 @@ public class ApkReader {
         }
     }
 
+    public ApkInfo getApkInfo() throws InterruptedException, EnvironmentNotConfiguredException, IOException {
+        return new ApkInfo(readApkManifest());
+    }
+
 }

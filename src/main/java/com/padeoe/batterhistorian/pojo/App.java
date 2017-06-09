@@ -1,5 +1,7 @@
 package com.padeoe.batterhistorian.pojo;
 
+import com.padeoe.platformtools.ApkInfo;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
@@ -114,6 +116,10 @@ public class App {
                 ", description='" + description + '\'' +
                 ", tags=" + tags +
                 '}';
+    }
+
+    public static App fromApkInfo(ApkInfo apkInfo){
+        return new App(apkInfo.getPackageName(),Integer.parseInt(apkInfo.getVersionCode()),apkInfo.getApkName(),apkInfo.getVersionName(),null);
     }
 }
 
