@@ -183,7 +183,8 @@
                 var trtext = tr.split("\n");
                 var appId = trtext[0].trim();
                 var appName = trtext[1].trim();
-                window.location.href = "/pages/statics_analyse.html?id="+appId+"&name="+appName;
+                var appPackageName = trtext[3].trim();
+                window.location.href = "/pages/statics_analyse.html?id="+appId+"&name="+appName+"&package="+appPackageName;
             },false)
         }
     </script>

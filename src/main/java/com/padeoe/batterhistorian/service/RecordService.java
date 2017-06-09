@@ -23,6 +23,6 @@ public interface RecordService{
     void testApp(Device device, App app, ApkInfo apkInfo) throws InterruptedException, StatsInfoNotFoundException, EnvironmentNotConfiguredException, IOException;
     Iterable<Record> getAllRecord();
     Iterable<Record> getAppPowerVersionLine(String packageName,String deviceId);
+    Iterable<Record> getAppPowerVersionLineWithDeviceName(String packageName,String deviceName);
     Iterable<Record> getPowerByAppId(String appId);
-
 }

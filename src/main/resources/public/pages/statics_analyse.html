@@ -235,6 +235,7 @@
 
         var appId = "";
         var appName = "";
+        var packageName="";
 
         var barchart1_data = [{
             x: '请选择对比内容',
@@ -366,7 +367,7 @@
                     areachart(areachart_data);
                 }
             }
-            xmlhttp.open("GET", "/areachart?q="+"&appId="+window.appId  +"&platform="+platform,true);
+            xmlhttp.open("GET", "/areachart?q="+"&appId="+window.packageName  +"&platform="+platform,true);
             xmlhttp.send();
         }
 
@@ -405,6 +406,12 @@
             }
         }
         $(document).ready(function(){
+            var temp = window.location.toString();
+            appId = temp.substring(temp.indexOf("id=")+3,temp.indexOf('&'))
+            var temp1 = temp.indexOf('&')
+            appName = decodeURIComponent(temp.substring(temp.indexOf("name=")+5),temp.indexOf('&'),temp1);
+            packageName = temp.substring(temp.indexOf("package=")+8)
+
             $('#dataTables-example').DataTable({
                 responsive: true
             });
@@ -418,9 +425,7 @@
             tagchart_set()
             choosePlatform1_set()
 
-            var temp = window.location.toString();
-            appId = temp.substring(temp.indexOf("id=")+3,temp.indexOf('&'))
-            appName = decodeURIComponent(temp.substring(temp.indexOf("name=")+5));
+
 
             $('#headtitle').html(appName);
         })
@@ -479,7 +484,7 @@
                     });*/
                 }
             }
-            xmlhttp.open("GET", "/multipleVersionchart?q=" +"&appId="+window.appId +"&platform="+platform,true);
+            xmlhttp.open("GET", "/multipleVersionchart?q=" +"&appId="+window.packageName +"&platform="+platform,true);
             xmlhttp.send();
         }
 
@@ -554,7 +559,6 @@
             xmlhttp.open("GET", "/getMSPP?q=" +"&appId="+window.appId ,true);
             xmlhttp.send();
         }
-        barchartMSPP_draw();
 
         function tagchart_set(){
             tagchart("testtag");

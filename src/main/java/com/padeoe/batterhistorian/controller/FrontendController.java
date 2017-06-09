@@ -41,11 +41,11 @@ public class FrontendController {
      */
     @PostMapping(path = "/UploadApp")
     public @ResponseBody
-    String UploadApp(@RequestParam("file") MultipartFile file, @RequestParam String TagContent, @RequestParam String DetailContent, @RequestParam String usePlatform) throws IOException, EnvironmentNotConfiguredException, InterruptedException{
+    String UploadApp(@RequestParam("file") MultipartFile file, @RequestParam String TagContent, @RequestParam String DetailContent, @RequestParam String usePlatform) throws IOException, EnvironmentNotConfiguredException, InterruptedException {
         String fileName = file.getOriginalFilename();
 
         byte[] bytes = file.getBytes();
-        File apkFile=new File(fileName);
+        File apkFile = new File(fileName);
         BufferedOutputStream stream =
                 new BufferedOutputStream(new FileOutputStream(apkFile));
         stream.write(bytes);
@@ -62,13 +62,13 @@ public class FrontendController {
                     devices.stream().forEach(adbDevice -> {
                         try {
                             Device device = Device.fromADBDevice(adbDevice);
-                            if(usePlatform.indexOf(device.getSerialNumber())!=-1){
+                            if (usePlatform.indexOf(device.getSerialNumber()) != -1) {
                                 adbDevice.installAPK(apkFile);
-                                App app=App.fromApkInfo(apkInfo);
-                                app.setTags(new HashSet<Tag>(Arrays.asList(TagContent.split(";")).stream().map(tagString->new Tag(tagString)).collect(Collectors.toList())));
+                                App app = App.fromApkInfo(apkInfo);
+                                app.setTags(new HashSet<Tag>(Arrays.asList(TagContent.split(";")).stream().map(tagString -> new Tag(tagString)).collect(Collectors.toList())));
                                 app.setDescription(DetailContent);
                                 //   appService.save(app);
-                                recordService.testApp(device,app,apkInfo);
+                                recordService.testApp(device, app, apkInfo);
                             }
                         } catch (InstallFailureException e) {
                             e.printStackTrace();
@@ -101,20 +101,18 @@ public class FrontendController {
 
         int j = 0;
         Iterator<Record> iterator = recordService.getPowerByAppId(appId).iterator();
-        while(iterator.hasNext()){
+        while (iterator.hasNext()) {
             Record record = iterator.next();
             tempdata[j][0] = record.getDevice().getBrand();
-            tempdata[j][1] = String.valueOf( record.getCpuPower());
-            tempdata[j][2] = String.valueOf( record.getRadioPower());
-            tempdata[j][3] = String.valueOf( record.getWakePower());
-            tempdata[j][4] = String.valueOf( record.getWifiPower());
-            tempdata[j][5] = String.valueOf( record.getGpsPower());
-            tempdata[j][6] = String.valueOf( record.getSensorPower());
-            tempdata[j][7] = String.valueOf( record.getCamerPower());
+            tempdata[j][1] = String.valueOf(record.getCpuPower());
+            tempdata[j][2] = String.valueOf(record.getRadioPower());
+            tempdata[j][3] = String.valueOf(record.getWakePower());
+            tempdata[j][4] = String.valueOf(record.getWifiPower());
+            tempdata[j][5] = String.valueOf(record.getGpsPower());
+            tempdata[j][6] = String.valueOf(record.getSensorPower());
+            tempdata[j][7] = String.valueOf(record.getCamerPower());
             j++;
         }
-
-
 
 
         data = " <table width=\"100%\" class=\"table table-striped table-bordered table-hover\" id=\"dataTables-example\">\n" +
@@ -161,20 +159,23 @@ public class FrontendController {
     String areachart(@RequestParam String appId, @RequestParam String platform) {
         String tempdata[][] = {{"0", "0", "0", "0", "0", "0", "0", "0", "0"}};//test
 
-        Iterator<Record> iterator = recordService.getAppPowerVersionLine(appId, platform).iterator();
+        Iterator<Record> iterator = recordService.getAppPowerVersionLineWithDeviceName(appId, platform).iterator();
 
         int j = 0;
-        while(iterator.hasNext()){
+        while (iterator.hasNext()) {
             Record record = iterator.next();
+            Device tmpDevice = record.getDevice();
+            String deviceName = tmpDevice.getBrand() + " " + tmpDevice.getModel() + " " + tmpDevice.getAndroidVersion();
             tempdata[j][0] = record.getApp().getVersionName();
-            tempdata[j][1] = String.valueOf( record.getCpuPower());
-            tempdata[j][2] = String.valueOf( record.getRadioPower());
-            tempdata[j][3] = String.valueOf( record.getWakePower());
-            tempdata[j][4] = String.valueOf( record.getWifiPower());
-            tempdata[j][5] = String.valueOf( record.getGpsPower());
-            tempdata[j][6] = String.valueOf( record.getSensorPower());
-            tempdata[j][7] = String.valueOf( record.getCamerPower());
+            tempdata[j][1] = String.valueOf(record.getCpuPower());
+            tempdata[j][2] = String.valueOf(record.getRadioPower());
+            tempdata[j][3] = String.valueOf(record.getWakePower());
+            tempdata[j][4] = String.valueOf(record.getWifiPower());
+            tempdata[j][5] = String.valueOf(record.getGpsPower());
+            tempdata[j][6] = String.valueOf(record.getSensorPower());
+            tempdata[j][7] = String.valueOf(record.getCamerPower());
             j++;
+
         }
 
 
@@ -269,23 +270,16 @@ public class FrontendController {
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append("                                            <select id=\"choosePlatform_2\">\n");
         stringBuffer.append("                                                <option value=\"1\" selected=\"selected\">选择平台</option>\n");
-        try {
-            List<Device> devices = deviceService.detectAllDeviceConnected();
-            int i = 2;
-            for (Device device : devices) {
-                stringBuffer.append("<option value=\"" + i + "\" >" + device.getBrand() + " " + device.getModel() +" "+device.getAndroidVersion() + "</option>\n");
-                i++;
-            }
-            stringBuffer.append("</select>");
-            return stringBuffer.toString();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return e.getMessage();
-        } catch (EnvironmentNotConfiguredException e) {
-            e.printStackTrace();
-            return e.getMessage();
+
+        List<Device> devices = recordService.getTestedDevices(appId);
+        int i = 2;
+        for (Device device : devices) {
+            stringBuffer.append("<option value=\"" + i + "\" >" + device.getBrand() + " " + device.getModel() + " " + device.getAndroidVersion() + "</option>\n");
+            i++;
         }
-/*        String
+        stringBuffer.append("</select>");
+        return stringBuffer.toString();
+
     }
 
     @GetMapping(path = "/choosePlatform1")
@@ -295,22 +289,16 @@ public class FrontendController {
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append("                                            <select id=\"choosePlatform_1\">\n");
         stringBuffer.append("                                                <option value=\"1\" selected=\"selected\">选择平台</option>\n");
-        try {
-            List<Device> devices = deviceService.detectAllDeviceConnected();
-            int i = 2;
-            for (Device device : devices) {
-                stringBuffer.append("<option value=\"" + i + "\" >" + device.getBrand() + " " + device.getModel() +" "+device.getAndroidVersion() + "</option>\n");
-                i++;
-            }
-            stringBuffer.append("</select>");
-            return stringBuffer.toString();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return e.getMessage();
-        } catch (EnvironmentNotConfiguredException e) {
-            e.printStackTrace();
-            return e.getMessage();
+
+        List<Device> devices = recordService.getTestedDevices(appId);
+        int i = 2;
+        for (Device device : devices) {
+            stringBuffer.append("<option value=\"" + i + "\" >" + device.getBrand() + " " + device.getModel() + " " + device.getAndroidVersion() + "</option>\n");
+            i++;
         }
+        stringBuffer.append("</select>");
+        return stringBuffer.toString();
+
 /*        String tempdata[] = {"小米","三星","华为"};
         //tagdata =
         // (appId);
@@ -406,7 +394,6 @@ public class FrontendController {
         Iterator<Device> iterator = allDevices.iterator();
 
 
-
         data = "   <table width=\"100%\" class=\"table\" id=\"choosePlatformForm\">\n" +
                 "                                    <thead>\n" +
                 "                                    <tr>\n" +
@@ -420,7 +407,7 @@ public class FrontendController {
                 "                                    <tbody>";
 
         int i = 0;
-        while(iterator.hasNext()){
+        while (iterator.hasNext()) {
             data = data +
                     "                                        <tr>\n" +
                     "                                               <td align=\"center\"><label><input name=\"Platform\" type=\"checkbox\" value=\"1\"  checked=\"checked\" /></label> </td>\n";
@@ -430,7 +417,7 @@ public class FrontendController {
             });*/
 
             Device device = iterator.next();
-            data = data + "<td>" + device.getSerialNumber()+ "</td>\n";
+            data = data + "<td>" + device.getSerialNumber() + "</td>\n";
             data = data + "<td>" + device.getBrand() + "</td>\n";
             data = data + "<td>" + device.getModel() + "</td>\n";
             data = data + "<td>" + device.getAndroidVersion() + "</td>\n";
@@ -453,7 +440,7 @@ public class FrontendController {
     public @ResponseBody
     String multipleVersionchart(@RequestParam String appId, @RequestParam String platform) {
         String data = "";
-        Iterable<Record> appPowerVersionLine = recordService.getAppPowerVersionLine(appId, platform);
+        Iterable<Record> appPowerVersionLine = recordService.getAppPowerVersionLineWithDeviceName(appId, platform);
 
 /*        String datatemp[][]={{"201023","43","14","23","22","14","25","23","14"},{"201026","48","12","21","19","12","23","21","17"}};//test
         // datatemp = AppVersionDetail(appId,platform);
@@ -533,6 +520,7 @@ public class FrontendController {
                 "                                        <th width=\"100\">ID</th>\n" +
                 "                                        <th width=\"150\">APP应用名称</th>\n" +
                 "                                        <th width=\"100\">最新版本号</th>\n" +
+                "                                        <th width=\"100\">包名</th>\n" +
                 "                                        <th>描述</th>\n" +
                 "                                    </tr>\n" +
                 "                                    </thead>\n" +
@@ -560,6 +548,8 @@ public class FrontendController {
             data = data + "<td>" + app.getId() + "</td>\n";
             data = data + "<td>" + app.getName() + "</td>\n";
             data = data + "<td>" + app.getVersionName() + "</td>\n";
+            data = data + "<td>" + app.getPackageName() + "</td>\n";
+            data = data + "<td>" + app.getDescription() + "</td>\n";
             data = data + "  </tr>\n";
             i++;
         }

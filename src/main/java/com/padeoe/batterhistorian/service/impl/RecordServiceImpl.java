@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -23,7 +24,7 @@ public class RecordServiceImpl implements RecordService {
     private RecordRepository recordRepository;
 
     public List<Device> getTestedDevices(String appId) {
-        return recordRepository.getTestedDevices(appId);
+        return recordRepository.getTestedDevices(Integer.parseInt(appId));
     }
 
 
@@ -61,11 +62,18 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     public Iterable<Record> getAppPowerVersionLine(String packageName, String deviceId) {
-        return recordRepository.getAppPowerVersionLine(packageName, deviceId);
+        return recordRepository.getAppPowerVersionLine(packageName,deviceId);
     }
 
     @Override
-    public Iterable<Record> getPowerByAppId(String appId) {
-        return recordRepository.findAllByApp_Id(appId);
+    public Iterable<Record> getAppPowerVersionLineWithDeviceName(String packageName, String deviceName) {
+        return recordRepository.findAllByPackageNameAndDeviceName(packageName,deviceName);
     }
+
+
+    @Override
+    public Iterable<Record> getPowerByAppId(String appId) {
+        return recordRepository.findAllByApp_Id(Integer.parseInt(appId));
+    }
+
 }

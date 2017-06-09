@@ -15,15 +15,15 @@ public interface RecordRepository extends CrudRepository<Record,Long>{
     /**
      * 查询特定app在哪些设备上测试过
      */
-    @Query("select distinct record.device from Record record where record.app=?1")
-    List<Device> getTestedDevices(String appId);
+    @Query("select distinct record.device from Record record where record.app.id=?1")
+    List<Device> getTestedDevices(Integer appId);
 
     /**
      * 获取特定app的测试记录
      * @param appId app的id
      * @return 测试记录
      */
-    List<Record>getRecordsByAppId(String appId);
+    List<Record>getRecordsByAppId(Integer appId);
 
     /**
      * 获取app不同版本的耗电情况
@@ -33,6 +33,8 @@ public interface RecordRepository extends CrudRepository<Record,Long>{
     @Query("select record from Record record inner join record.app as A inner join record.device as B where A.packageName=?1 and B.serialNumber=?2 order by A.versionCode")
     List<Record>getAppPowerVersionLine(String packageName,String serialNumber);
 
-    List<Record> findAllByApp_Id(String appId);
+    List<Record> findAllByApp_Id(Integer appId);
 
+    @Query("select record from Record record inner join record.app as A inner join record.device as B where A.packageName=?1 and concat(B.brand,' ',B.model,' ',B.androidVersion)=?2 order by A.versionCode")
+    List<Record> findAllByPackageNameAndDeviceName(String packageName,String deviceName);
 }
