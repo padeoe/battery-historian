@@ -393,6 +393,7 @@ public class FrontendController {
                 "                                    <thead>\n" +
                 "                                    <tr>\n" +
                 "                                        <th width=\"45\" align=\"center\">选择</th>\n" +
+                "                                        <th width=\"200\">序号</th>\n" +
                 "                                        <th width=\"200\">平台名称</th>\n" +
                 "                                        <th width=\"200\">型号</th>\n" +
                 "                                        <th width=\"200\">安卓版本</th>\n" +
