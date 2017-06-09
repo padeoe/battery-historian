@@ -333,7 +333,7 @@ public class FrontendController {
         int i = 2;
         StringBuffer stringBuffer = new StringBuffer();
         for (Tag tag : tags) {
-            stringBuffer.append("<option value=\"" + i + "\" >" + tag + "</option>\n");
+            stringBuffer.append("<option value=\"" + i + "\" >" + tag.getTagName() + "</option>\n");
             i++;
         }
         stringBuffer.append("</select>");
@@ -358,13 +358,12 @@ public class FrontendController {
         // datatemp=GetMSPP(appId);
 
         String data = "[";
-        StringBuffer stringBuffer = new StringBuffer();
+        StringBuffer stringBuffer = new StringBuffer("[");
         Iterator<Record> recordIterator = powerByAppId.iterator();
-        stringBuffer.append(recordIterator.next());
         while (recordIterator.hasNext()) {
             Record record = recordIterator.next();
-            stringBuffer.append(",");
             stringBuffer.append("{\"x\":\"" + record.getDevice().getBrand() + " " + record.getDevice().getModel() + "\",\"y\":" + record.getMsapp() + "}");
+            stringBuffer.append(",");
         }
 /*        for(int i = 0;i<datatemp.length;i++) {
             data = data + "{\"x\":\"" + datatemp[i][0] + "\",\"y\":" + datatemp[i][1] + "}";
@@ -372,6 +371,7 @@ public class FrontendController {
                 data = data + ",";
             }
         }*/
+stringBuffer.deleteCharAt(stringBuffer.length()-1);
         stringBuffer.append("]");
         data = data + "]";
 
