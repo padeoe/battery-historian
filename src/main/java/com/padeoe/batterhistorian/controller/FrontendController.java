@@ -8,17 +8,18 @@ import com.padeoe.batterhistorian.pojo.Tag;
 import com.padeoe.batterhistorian.service.AppService;
 import com.padeoe.batterhistorian.service.DeviceService;
 import com.padeoe.batterhistorian.service.RecordService;
-import com.padeoe.platformtools.ADBTool;
-import com.padeoe.platformtools.EnvironmentNotConfiguredException;
-import com.padeoe.platformtools.InstallFailureException;
+import com.padeoe.platformtools.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by zafara on 2017/5/5
@@ -40,28 +41,44 @@ public class FrontendController {
      */
     @PostMapping(path = "/UploadApp")
     public @ResponseBody
-    String UploadApp(@RequestParam("file") MultipartFile file, @RequestParam String TagContent, @RequestParam String DetailContent, @RequestParam String usePlatform) {
-        String fileName=file.getOriginalFilename();
-        try {
-            byte[] bytes = file.getBytes();
-            BufferedOutputStream stream =
-                    new BufferedOutputStream(new FileOutputStream(new File(fileName)));
-            stream.write(bytes);
-            stream.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    String UploadApp(@RequestParam("file") MultipartFile file, @RequestParam String TagContent, @RequestParam String DetailContent, @RequestParam String usePlatform) throws IOException, EnvironmentNotConfiguredException, InterruptedException{
+        String fileName = file.getOriginalFilename();
+
+        byte[] bytes = file.getBytes();
+        File apkFile=new File(fileName);
+        BufferedOutputStream stream =
+                new BufferedOutputStream(new FileOutputStream(apkFile));
+        stream.write(bytes);
+        stream.close();
+        ApkReader apkReader = new ApkReader(apkFile);
+        ApkInfo apkInfo = apkReader.getApkInfo();
+
         new Thread() {
             @Override
             public void run() {
                 super.run();
                 try {
-                    ADBTool.getDevices().forEach(adbDevice -> {
+                    List<ADBDevice> devices = ADBTool.getDevices();
+                    devices.stream().forEach(adbDevice -> {
                         try {
-                            adbDevice.installAPK(new File(fileName));
+                            Device device = Device.fromADBDevice(adbDevice);
+                            if(usePlatform.indexOf(device.getSerialNumber())!=-1){
+                                adbDevice.installAPK(apkFile);
+                                App app=App.fromApkInfo(apkInfo);
+                                app.setTags(new HashSet<Tag>(Arrays.asList(TagContent.split(";")).stream().map(tagString->new Tag(tagString)).collect(Collectors.toList())));
+                                app.setDescription(DetailContent);
+                                //   appService.save(app);
+                                recordService.testApp(device,app,apkInfo);
+                            }
                         } catch (InstallFailureException e) {
+                            e.printStackTrace();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (EnvironmentNotConfiguredException e) {
+                            e.printStackTrace();
+                        } catch (StatsInfoNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
                             e.printStackTrace();
                         }
                     });
@@ -72,8 +89,9 @@ public class FrontendController {
                 }
             }
         }.start();
-        return "上传成功,请等10分钟分析解决";
+        return "正在安装与测试";
     }
+
 
     @GetMapping(path = "/AppDetailForm")
     public @ResponseBody
@@ -380,11 +398,11 @@ public class FrontendController {
      */
     @GetMapping(path = "/getPlatformData")
     public @ResponseBody
-    String getPlatformData() {
+    String getPlatformData() throws IOException, EnvironmentNotConfiguredException {
         String data = "";
 
         String[][] tempdata = {{"苹果5S", "32M内存"}, {"小米", "62M内存"}};
-        Iterable<Device> allDevices = deviceService.getAllDevices();
+        Iterable<Device> allDevices = deviceService.detectAllDeviceConnected();
         Iterator<Device> iterator = allDevices.iterator();
 
 
